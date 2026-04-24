@@ -1,0 +1,9 @@
+main:
+  - title: Home
+    url: /
+  - title: GitHub Integration
+    url: /github-integration.html
+  - title: GitHub Integration Testing
+    url: /github-integration-testing.html
+  - title: Test Results Template
+    url: /test-results-summary-template.html

@@ -1,3 +1,9 @@
+---
+layout: default
+title: GitHub Integration Testing
+permalink: /github-integration-testing.html
+---
+
 # GitHub Integration — Validation Guide
 
 Step-by-step testing for all 4 phases of the GitHub MCP implementation.
