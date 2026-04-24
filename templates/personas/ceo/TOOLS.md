@@ -2,34 +2,34 @@
 
 ## Required
 
-- **Linear MCP** (`mcp__claude_ai_Linear__*`): Issue management, comments, sub-issue creation, label and status updates.
+- **GitHub MCP** (`mcp__github__*`): Issue management, comments, issue creation, label and status updates.
 
 ## Usage Patterns
 
 ### Make a scope decision
 
 1. `get_issue` – read the issue and all context
-2. `list_comments` – review discussion and prior decisions
-3. `save_comment` – post the decision with rationale
-4. `save_issue` – update priority, labels, or status as needed
+2. `list_issue_comments` – review discussion and prior decisions
+3. `add_issue_comment` – post the decision with rationale
+4. `add_labels_to_issue` / `remove_label_from_issue` – update priority or persona labels
 
 ### Review a decomposition
 
 1. `get_issue` – read the parent issue
-2. `list_issues` – check existing sub-issues
-3. `save_issue` – create/modify sub-issues with correct sequencing and labels
-4. `save_comment` – post the approved breakdown
+2. `list_issues` – check related issues
+3. `create_issue` – create sub-issues with correct labels and "Related to #parent" body
+4. `add_issue_comment` – post the approved breakdown
 
 ### Communicate with the Board
 
-1. `save_comment` – post a status summary or recommendation
+1. `add_issue_comment` – post a status summary or recommendation
 2. Include @Board-User-Name for visibility
 
 ### Coordinate cross-cutting work
 
 1. `list_issues` – find related issues across personas
-2. `save_comment` – post coordination notes on each relevant issue
-3. `save_issue` – update priorities to reflect sequencing decisions
+2. `add_issue_comment` – post coordination notes on each relevant issue
+3. `add_labels_to_issue` – update priorities to reflect sequencing decisions
 
 ## Not Used
 

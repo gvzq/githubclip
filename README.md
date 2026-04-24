@@ -1,17 +1,17 @@
 # githubclip
 
-Linear-backed agent orchestration for Claude Code. A single Claude instance wears different "hats" (personas) based on Linear issue labels – an Orchestrator routes work, a CEO makes strategic calls, and worker personas execute.
+GitHub-backed agent orchestration for Claude Code. A single Claude instance wears different "hats" (personas) based on GitHub issue labels – an Orchestrator routes work, a CEO makes strategic calls, and worker personas execute.
 
 ## How It Works
 
 ```
-Linear Issues → /heartbeat → Persona Matching → Work → Report Back
+GitHub Issues → /heartbeat → Persona Matching → Work → Report Back
 ```
 
-1. **Issues** live in Linear with persona labels (`backend`, `frontend`, etc.)
+1. **Issues** live in a GitHub Project with persona labels (`backend`, `frontend`, etc.)
 2. **Heartbeat** picks the highest-priority issue and resolves which persona handles it
 3. **Personas** (CEO, Backend, Frontend, ...) define identity, tools, and runtime config
-4. **Reports** are structured comments on the Linear issue with progress, commits, and blockers
+4. **Reports** are structured comments on the GitHub issue with progress, commits, and blockers
 5. **Schedule** runs heartbeats automatically via Claude Code's `/schedule`
 
 The human is the **Board** – the ultimate escalation target when the agent is blocked.
@@ -30,24 +30,26 @@ claude --plugin-dir /path/to/githubclip
 ### Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- [Linear MCP](https://linear.app/docs/mcp) connected – add to your `.mcp.json` or global MCP config:
+- [GitHub MCP](https://github.com/github/github-mcp-server) connected – add to your `.mcp.json` or global MCP config:
   ```json
   {
     "mcpServers": {
-      "linear": {
-        "type": "url",
-        "url": "https://mcp.linear.app/sse"
+      "github": {
+        "type": "stdio",
+        "command": "github-mcp-server",
+        "args": ["stdio"],
+        "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-token>" }
       }
     }
   }
   ```
-- Linear workspace with at least one team
-- Issues assigned to your Linear account (the heartbeat queries `assignee: "me"`)
+- GitHub repository with a GitHub Project v2 (with `Status` and `Priority` custom fields)
+- Issues assigned to your GitHub account
 
 ## Quick Start
 
 ```bash
-# 1. Initialize githubclip in your repo (creates config + personas + Linear labels)
+# 1. Initialize githubclip in your repo (creates config + personas + labels)
 /githubclip-init
 
 # 2. Run a single heartbeat cycle
@@ -65,15 +67,15 @@ claude --plugin-dir /path/to/githubclip
 Each `/heartbeat` runs an 11-step cycle:
 
 1. **Load config** – read `.githubclip/config.yaml`, check lockfile
-2. **Check inbox** – query Linear for assigned issues, filter and sort
+2. **Check inbox** – query GitHub Project for assigned issues, filter and sort
 3. **Pick issue** – highest priority In Progress, then Todo
 4. **Resolve persona** – match issue label → persona directory, load SOUL.md + TOOLS.md
 5. **Validate tools** – check required MCP tools are available
 6. **Lock issue** – add `agent-working` label
-7. **Understand context** – read issue, comments, parent, heartbeat counter
+7. **Understand context** – read issue, comments, heartbeat counter
 8. **Do work** – follow persona instructions (CEO triages, workers implement)
 9. **Report** – post structured comment with progress, commits, sub-issues
-10. **Update state** – manage labels based on outcome (done/blocked/continuing)
+10. **Update state** – manage Project status and labels based on outcome
 11. **Next or exit** – pick another issue or clean up and stop
 
 Use `--dry-run` to see what would be picked without doing work. Use `--persona backend` to force a specific persona.
@@ -105,7 +107,7 @@ After `/githubclip-init`, your repo gets:
 
 ```
 .githubclip/
-├── config.yaml              # Linear settings, heartbeat behavior, persona routing
+├── config.yaml              # GitHub settings, heartbeat behavior, persona routing
 ├── heartbeat-log.jsonl      # Append-only heartbeat history (created at runtime)
 └── personas/
     ├── orchestrator/
@@ -141,7 +143,7 @@ After `/githubclip-init`, your repo gets:
 
 ## Label System
 
-githubclip uses Linear labels for state management:
+githubclip uses GitHub labels for state management:
 
 | Label | Purpose |
 |-------|---------|
@@ -149,7 +151,7 @@ githubclip uses Linear labels for state management:
 | `agent-blocked` | Agent is blocked, needs Board attention |
 | `backend`, `frontend`, etc. | Routes issue to the matching persona |
 
-All labels live under a "githubclip" parent group in Linear, created by `/githubclip-init`.
+All labels are created under a `githubclip` group by `/githubclip-init`.
 
 ## Schedule Cadences
 
@@ -166,7 +168,7 @@ Use `/persona-import` to convert Paperclip agent directories into githubclip per
 
 ## Background
 
-githubclip is inspired by [Paperclip](https://github.com/paperclipai/paperclip), an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. githubclip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by Linear instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
+githubclip is inspired by [Paperclip](https://github.com/paperclipai/paperclip), an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. githubclip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by GitHub instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
 
 ## Design
 

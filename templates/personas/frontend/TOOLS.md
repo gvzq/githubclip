@@ -2,7 +2,7 @@
 
 ## Required
 
-- **Linear MCP** (`mcp__claude_ai_Linear__*`): Read issues, post comments, update status.
+- **GitHub MCP** (`mcp__github__*`): Read issues, post comments, manage labels.
 - **Repo tools** (Read, Write, Edit, Bash, Grep, Glob): Full codebase access for implementation.
 
 ## Common Patterns
@@ -12,7 +12,7 @@
 2. Check existing components for patterns (Glob/Grep)
 3. Create or modify component files (Write/Edit)
 4. Run dev server and verify (Bash)
-5. Commit and post heartbeat comment (Bash + Linear MCP)
+5. Commit and post heartbeat comment (Bash + GitHub MCP)
 
 ### Fix a UI bug
 1. Read the issue for reproduction steps

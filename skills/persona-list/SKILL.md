@@ -28,10 +28,10 @@ For each persona in the `personas` config map:
 githubclip Personas
 ──────────────────
 Name              Label       Model    Turns  Escalates  Tools
-Orchestrator      (default)   haiku    50     ceo        Linear
-CEO               ceo         sonnet   100    board      Linear
-Backend Engineer  backend     opus     300    ceo        Linear
-Frontend Engineer frontend    sonnet   200    ceo        Linear
+Orchestrator      (default)   haiku    50     ceo        GitHub
+CEO               ceo         sonnet   100    board      GitHub
+Backend Engineer  backend     opus     300    ceo        GitHub
+Frontend Engineer frontend    sonnet   200    ceo        GitHub
 
 Files:
   Orchestrator: .githubclip/personas/orchestrator/ ✓ SOUL ✓ TOOLS ✓ config

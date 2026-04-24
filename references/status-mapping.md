@@ -96,17 +96,3 @@ Maps between provider-specific workflow states and githubclip agent states, with
 - **Actor identity:** Resolved once at heartbeat start, cached for @-mentions
 - **Persona routing:** Exact label match (case-sensitive)
 
-## Migration from Linear
-
-For repos migrating from Linear:
-
-| Linear State | → GitHub Status |
-|---|---|
-| Backlog | (not created in project) |
-| Todo | Todo |
-| In Progress | In Progress |
-| In Review | In Review |
-| Done | Done |
-| Canceled | Canceled |
-
-Use `compat.source_provider: linear` in config during transition period.

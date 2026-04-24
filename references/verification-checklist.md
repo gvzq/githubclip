@@ -1,6 +1,6 @@
 # GitHub MCP 1:1 Verification Checklist
 
-This document outlines the validation steps to verify githubclip's GitHub MCP integration provides 1:1 behavioral parity with Linear and meets plan requirements.
+This document outlines the validation steps to verify githubclip's GitHub MCP integration meets plan requirements.
 
 ## Pre-Implementation Validation
 
@@ -145,28 +145,21 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('�
    - [ ] `agent-working` is kept (safe retry)
    - [ ] Circuit breaker: after N failures, run downgrades to read-only
 
-## Phase 4: 1:1 Behavior Parity
+## Phase 4: Behavior Validation
 
-### Comparison Matrix (Linear vs GitHub)
+### Expected Behavior Matrix
 
-| Behavior | Linear | GitHub | Status |
-|---|---|---|---|
-| Queue source | Linear issues | GitHub Project items | ✓ |
-| State storage | Status + Priority fields | Project Status/Priority fields | ✓ |
-| Lock mechanism | `agent-working` label | `agent-working` label | ✓ |
-| Sorting | Status > Priority > Updated > ID | Status > Priority > Updated > ID | ✓ |
-| Blocking | `agent-blocked` label | `agent-blocked` label | ✓ |
-| Persona routing | Linear labels | GitHub labels | ✓ |
-| Heartbeat counter | Derived from comments | Derived from comments | ✓ |
-| Comment format | Heartbeat #N template | Heartbeat #N template | ✓ |
-| Stale lock cleanup | `agent-working` without comment | `agent-working` without comment | ✓ |
-
-### Cross-Provider Compatibility
-
-- [ ] Config can have `provider: github` without breaking existing `provider: linear` systems
-- [ ] Persona system works identically in both providers
-- [ ] Heartbeat skill routes to correct provider implementation
-- [ ] Init skill handles both Linear and GitHub setup flows
+| Behavior | Expected | Status |
+|---|---|---|
+| Queue source | GitHub Project items | ✓ |
+| State storage | Project Status/Priority fields | ✓ |
+| Lock mechanism | `agent-working` label | ✓ |
+| Sorting | Status > Priority > Updated > ID | ✓ |
+| Blocking | `agent-blocked` label | ✓ |
+| Persona routing | GitHub labels | ✓ |
+| Heartbeat counter | Derived from comments | ✓ |
+| Comment format | Heartbeat #N template | ✓ |
+| Stale lock cleanup | `agent-working` without comment | ✓ |
 
 ## Phase 5: Anti-Fragile Safeguards
 
@@ -257,7 +250,7 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('�
 ## Final Verification
 
 - [ ] All reference files parse and render correctly
-- [ ] No hardcoded Linear MCP tool names in non-reference files
+- [ ] No hardcoded MCP tool names outside of `agents/` and `skills/`
 - [ ] All `${CLAUDE_PLUGIN_ROOT}` references resolve correctly
 - [ ] Config version is 2 (GitHub-era)
 - [ ] Heartbeat skill version is 1.0.0+

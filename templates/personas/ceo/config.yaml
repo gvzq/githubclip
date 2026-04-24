@@ -4,8 +4,7 @@ label: ceo
 escalates_to: board
 
 required_tools:
-  - github                              # GitHub issue management (if provider: github)
-  - mcp__claude_ai_Linear               # Linear issue management (if provider: linear)
+  - github                              # GitHub issue management
 
 runtime:
   model: sonnet                         # Strategic thinking needs good reasoning, not max

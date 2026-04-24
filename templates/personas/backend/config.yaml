@@ -4,8 +4,7 @@ label: backend
 escalates_to: ceo
 
 required_tools:
-  - github                              # GitHub issue management (if provider: github)
-  - mcp__claude_ai_Linear               # Linear issue management (if provider: linear)
+  - github                              # GitHub issue management
   # Add repo-specific tools below:
   # - mcp__neon                         # Neon Postgres
 

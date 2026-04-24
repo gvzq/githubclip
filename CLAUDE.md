@@ -4,12 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-githubclip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides provider-agnostic agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on issue labels. Supports **GitHub** (primary) and **Linear** (legacy) as work item providers.
+githubclip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides GitHub-backed agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on GitHub issue labels.
 
 **Design spec:** `docs/specs/2026-03-25-githubclip-design.md`
 **Implementation plan:** `docs/specs/2026-03-25-githubclip-implementation-plan.md`
-**GitHub:** Configure in `.githubclip/config.yaml` with target repo and project
-**Linear (legacy):** Available via `provider: linear` in config
+**Config:** `.githubclip/config.yaml` in target repos
 
 ## Architecture
 
@@ -18,57 +17,32 @@ githubclip is a **Claude Code plugin** (no runtime code — entirely markdown/YA
 1. **Plugin** (this repo) — ships commands, skills, agents, references, and persona templates. Installed via `claude plugin add`.
 2. **Per-repo scaffold** (`.githubclip/`) — created by `/githubclip-init` in target repos. Contains `config.yaml`, persona directories, heartbeat log, and lockfile.
 
-### Core loop (provider-agnostic)
+### Core loop
 
 ```
-/heartbeat → Load Config & Validate → Check Queue (Provider) → Pick Issue → Resolve Persona
+/heartbeat → Load Config & Validate → Fetch GitHub Project Items → Pick Issue → Resolve Persona
   → Validate Tools → Lock Issue → Understand Context → Do Work → Report → Update State → Next/Exit
 ```
 
-The heartbeat is a **skill** (`skills/heartbeat/SKILL.md`), not code. Claude follows it as a procedure using provider-specific MCP tools (GitHub MCP or Linear MCP) and repo tools.
+The heartbeat is a **skill** (`skills/heartbeat/SKILL.md`), not code. Claude follows it as a procedure using GitHub MCP tools and repo tools.
 
 ### Heartbeat integration model
 
 ```mermaid
 flowchart TD
     A[/heartbeat command] --> B[Load .githubclip/config.yaml]
-    B --> C{Select provider}
-    C --> C1[GitHub adapter - primary]
-    C --> C2[Linear adapter - legacy]
-
-    C1 --> D[Fetch Project items]
-    C2 --> D[Fetch inbox items]
-
-    D --> E[Pick highest-priority item]
-    E --> F[Resolve persona from labels]
-    F --> G[Validate required tools]
-    G --> H[Acquire heartbeat lock]
-    H --> I[Understand context and execute work]
-    I --> J[Post heartbeat report/comment]
-    J --> K{Outcome}
-    K --> K1[Update Project fields + labels]
-    K --> K2[Update labels only if read-only mode]
-    K1 --> L{More actionable items?}
-    K2 --> L
-    L -->|Yes| D
+    B --> C[Fetch GitHub Project items]
+    C --> D[Pick highest-priority item]
+    D --> E[Resolve persona from labels]
+    E --> F[Validate required tools]
+    F --> G[Acquire heartbeat lock]
+    G --> H[Understand context and execute work]
+    H --> I[Post heartbeat report/comment]
+    I --> J{Outcome}
+    J --> K[Update Project fields + labels]
+    K --> L{More actionable items?}
+    L -->|Yes| C
     L -->|No| M[Release lock and exit]
-
-    subgraph Provider Surface
-      C1
-      C2
-    end
-
-    subgraph Shared Heartbeat Engine
-      E
-      F
-      G
-      H
-      I
-      J
-      K
-      L
-      M
-    end
 ```
 
 ### Persona system
@@ -78,7 +52,7 @@ Each persona = directory with 3 files:
 - `TOOLS.md` — available tools and usage patterns (shapes capabilities)
 - `config.yaml` — machine-readable runtime config (model, thinking effort, max turns, required tools)
 
-Routing: Linear issue label → `personas` map in config.yaml → persona directory.
+Routing: GitHub issue label → `personas` map in config.yaml → persona directory.
 
 ### Persona hierarchy
 
@@ -89,8 +63,7 @@ Routing: Linear issue label → `personas` map in config.yaml → persona direct
 
 ### Key conventions
 
-- **Provider selection:** Set `provider: github` or `provider: linear` in `.githubclip/config.yaml`
-- **Labels are the state machine (GitHub).** `agent-working` and `agent-blocked` are mutually exclusive. Managed via read-modify-write (fetch labels array → modify → save full set).
+- **Labels are the state machine.** `agent-working` and `agent-blocked` are mutually exclusive. Managed via read-modify-write (fetch labels array → modify → save full set).
 - **Project fields store workflow state (GitHub).** Status (Todo/In Progress/In Review/Done/Canceled) and Priority (Urgent/High/Medium/Low/None) are single-select custom fields resolved to IDs during init.
 - **Heartbeat counter is derived from comments**, not stored locally. Parse last `Heartbeat #N` from issue comments.
 - **Lockfile** (`.githubclip/.heartbeat-lock`) prevents concurrent heartbeats. Must be deleted on every exit path.

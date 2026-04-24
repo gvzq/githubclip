@@ -2,7 +2,7 @@
 
 ## Required
 
-- **Linear MCP** (`mcp__claude_ai_Linear__*`): Read issues, post comments, update status.
+- **GitHub MCP** (`mcp__github__*`): Read issues, post comments, manage labels.
 - **Repo tools** (Read, Write, Edit, Bash, Grep, Glob): Full codebase access for implementation.
 
 ## Common Patterns
@@ -12,7 +12,7 @@
 2. Create or modify files (Edit/Write)
 3. Run tests (Bash)
 4. Commit changes (Bash — git)
-5. Post heartbeat comment with commit SHAs (Linear MCP)
+5. Post heartbeat comment with commit SHAs (GitHub MCP)
 
 ### Fix a bug
 1. Read the issue for reproduction steps

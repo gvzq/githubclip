@@ -5,8 +5,7 @@ is_default: true
 escalates_to: ceo
 
 required_tools:
-  - github                              # GitHub MCP tools (if provider: github)
-  - mcp__claude_ai_Linear               # Linear MCP tools (if provider: linear)
+  - github                              # GitHub MCP tools
 
 runtime:
   model: haiku                          # Routing is mechanical – cheapest model works

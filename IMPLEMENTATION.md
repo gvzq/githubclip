@@ -1,10 +1,10 @@
-# GitHub MCP Migration Implementation Summary
+# Implementation Summary
 
-This document summarizes the complete implementation of the GitHub MCP 1:1 Heartbeat Migration Plan.
+This document summarizes the complete implementation of the githubclip GitHub heartbeat.
 
 ## Overview
 
-githubclip has been successfully migrated to support **GitHub Projects (v2)** as a primary provider, with Linear available as legacy support. The implementation maintains strict 1:1 behavioral parity with Linear while introducing anti-fragile safeguards for production reliability.
+githubclip uses **GitHub Projects (v2)** as its work queue, with anti-fragile safeguards for production reliability.
 
 **Implementation Status:** ✅ Complete (Phase 0-2, Phases 3-4 require execution/validation)
 
@@ -13,7 +13,6 @@ githubclip has been successfully migrated to support **GitHub Projects (v2)** as
 ### Core Configuration
 
 - **`templates/config.yaml`** (MODIFIED)
-  - Added `provider` selection (github|linear)
   - Added `github` section with repo, project, and field ID resolution
   - Added `antifragile` section with degradation and recovery settings
   - Updated from version 1 to version 2
@@ -28,8 +27,7 @@ githubclip has been successfully migrated to support **GitHub Projects (v2)** as
 
 - **`references/status-mapping.md`** (UPDATED)
   - Expanded with GitHub Project-specific details
-  - Added Linear→GitHub migration mapping
-  - Included both provider contexts
+  - GitHub Project-specific state and queue details
 
 - **`references/label-conventions.md`** (UPDATED)
   - GitHub-specific label patterns and read-modify-write semantics
@@ -38,7 +36,7 @@ githubclip has been successfully migrated to support **GitHub Projects (v2)** as
 
 - **`references/comment-format.md`** (UPDATED)
   - GitHub issue comment templates
-  - Replaced Linear-specific link format with GitHub issue/commit links
+  - GitHub issue/commit links and anti-fragile markers
   - Added anti-fragile markers (⚠️, 🔄, ❌, 🔧)
 
 - **`references/verification-checklist.md`** (CREATED)
@@ -49,60 +47,56 @@ githubclip has been successfully migrated to support **GitHub Projects (v2)** as
 ### Skills and Commands
 
 - **`skills/heartbeat/SKILL.md`** (REWRITTEN)
-  - Converted from Linear-only to GitHub-primary implementation
-  - Implemented 11-step heartbeat procedure for GitHub Projects
-  - Added schema drift sentry, canary mutation, circuit breaker
+  - 11-step heartbeat procedure for GitHub Projects
+  - Schema drift sentry, canary mutation, circuit breaker
   - Full anti-fragile operational behavior
 
 - **`skills/init/SKILL.md`** (REWRITTEN)
-  - Converted from Linear init to GitHub Project setup
-  - Project discovery and field enforcement (Status, Priority)
+  - GitHub Project setup and field enforcement (Status, Priority)
   - Idempotent field creation with non-destructive updates
   - Mutation smoke testing and validation
 
 - **`commands/heartbeat.md`** (UPDATED)
-  - Added provider-aware language
   - Documented anti-fragile behaviors
 
 - **`commands/githubclip-init.md`** (UPDATED)
-  - Converted to GitHub setup instructions
-  - Added GitHub Project and field setup steps
+  - GitHub Project and field setup steps
 
 ### Documentation
 
 - **`CLAUDE.md`** (UPDATED)
-  - Provider-agnostic architecture description
+  - GitHub-focused architecture description
   - Updated heartbeat integration diagram
-  - GitHub as primary, Linear as legacy option
-  - Updated key conventions for provider selection
 
-- **`docs/github-migration-guide.md`** (CREATED)
-  - Step-by-step migration path from Linear
-  - Configuration differences and workflow mapping
-  - Troubleshooting guide and rollback instructions
-  - Best practices and FAQ
+- **`references/status-mapping.md`** (UPDATED)
+  - GitHub Project-specific state and queue details
+
+- **`references/label-conventions.md`** (UPDATED)
+  - GitHub label patterns and read-modify-write semantics
+
+- **`references/comment-format.md`** (UPDATED)
+  - GitHub issue comment templates and anti-fragile markers
 
 ### Persona Templates
 
 - **`templates/personas/{orchestrator,backend,frontend,ceo}/config.yaml`** (UPDATED)
-  - All persona configs now list both `github` and `mcp__claude_ai_Linear` tools
-  - Provider-agnostic required_tools specification
+  - Persona configs list `github` as the required tool prefix
 
 ## Implementation Details
 
-### 1:1 Behavior Parity Matrix
+### Behavior Reference
 
-| Behavior | Linear | GitHub | Status |
-|---|---|---|---|
-| **Queue source** | Linear issues | Project items (GitHub) | ✅ Deterministic Project API |
-| **State storage** | Status/Priority fields | Project Status/Priority fields | ✅ Single-select fields |
-| **Lock mechanism** | `agent-working` label | `agent-working` label | ✅ Identical |
-| **Queue ranking** | Status > Priority > Updated > ID | Status > Priority > Updated > ID | ✅ Deterministic order |
-| **Blocking** | `agent-blocked` label | `agent-blocked` label | ✅ Identical |
-| **Persona routing** | Linear labels | GitHub labels | ✅ Identical pattern |
-| **Heartbeat counter** | Derived from comments | Derived from comments | ✅ Identical |
-| **Comment format** | `Heartbeat #N` template | `Heartbeat #N` template | ✅ Identical |
-| **Stale lock cleanup** | `agent-working` + timeout | `agent-working` + timeout | ✅ Identical |
+| Behavior | Implementation |
+|---|---|
+| **Queue source** | GitHub Project items (deterministic Project API) |
+| **State storage** | Project Status/Priority fields (single-select) |
+| **Lock mechanism** | `agent-working` label |
+| **Queue ranking** | Status > Priority > Updated > ID |
+| **Blocking** | `agent-blocked` label |
+| **Persona routing** | GitHub labels |
+| **Heartbeat counter** | Derived from issue comments |
+| **Comment format** | `Heartbeat #N` template |
+| **Stale lock cleanup** | `agent-working` + timeout |
 
 ### Anti-Fragile Safeguards
 
@@ -151,7 +145,7 @@ githubclip has been successfully migrated to support **GitHub Projects (v2)** as
 
 ```yaml
 version: 2
-provider: github  # or "linear"
+provider: github
 
 github:
   owner: "myorg"
@@ -183,10 +177,10 @@ github:
         none: "PVT_OPT_5"
   api_mode: "mcp_only"  # or "mcp_then_gh"
   strict_mode: true
-  queue_source: "project_items"  # fixed, not configurable
+  queue_source: "project_items"
   close_on_done: false
 
-heartbeat:  # cross-provider
+heartbeat:
   max_issues_per_heartbeat: 2
   stale_lock_hours: 4
   max_consecutive_failures: 3
@@ -198,12 +192,12 @@ heartbeat:  # cross-provider
     end: "07:00"
     behavior: "skip"
 
-labels:  # cross-provider
+labels:
   group: "githubclip"
   working: "agent-working"
   blocked: "agent-blocked"
 
-personas:  # cross-provider
+personas:
   orchestrator:
     path: "personas/orchestrator"
     label: null
@@ -224,10 +218,6 @@ antifragile:
   canary_check_enabled: true
   reconciliation_pass_enabled: false
   recovery_journal_enabled: true
-
-compat:
-  source_provider: null  # "linear" if migrating
-  migration_status: "active"
 ```
 
 ## Testing & Validation
@@ -301,25 +291,9 @@ compat:
 **Ongoing (Phase 4+):**
 1. Monitor heartbeat logs for errors
 2. Re-run init if Project fields renamed
-3. Optional: archive Linear or run in parallel for backup
-
-## Rollback Plan
-
-If severe issues arise:
-
-1. Update `.githubclip/config.yaml`:
-   ```yaml
-   provider: linear
-   ```
-
-2. Reconfigure Linear context (team, project, user)
-
-3. Re-run heartbeat — switches back to Linear MCP
-
-Note: Work completed during GitHub phase remains as GitHub issues; only future work queues from Linear.
 
 ## Conclusion
 
-The GitHub MCP migration plan has been fully implemented with deterministic queue building, anti-fragile safeguards, and complete backward compatibility. All reference documentation, skills, and configuration have been updated. The system is ready for testing and validation through the 6-phase verification checklist.
+githubclip has been fully implemented with deterministic queue building and anti-fragile safeguards. All reference documentation, skills, and configuration are GitHub-native. The system is ready for testing and validation through the verification checklist.
 
 **Next steps:** Execute Phase 1 (read-only) testing in target repository to confirm queue behavior before enabling write operations.

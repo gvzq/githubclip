@@ -2,7 +2,6 @@
 # Created by /githubclip-init – customize for your repo
 version: 2
 
-# Provider selection: github or linear
 provider: github
 
 # GitHub configuration (used when provider: github)
@@ -93,7 +92,3 @@ antifragile:
   reconciliation_pass_enabled: false    # Optional cleanup pass at end of heartbeat
   recovery_journal_enabled: true        # Record action steps for crash recovery
 
-# Compatibility section for migration from Linear
-compat:
-  source_provider: null                 # "linear" if migrating from Linear
-  migration_status: "active"            # active | completed

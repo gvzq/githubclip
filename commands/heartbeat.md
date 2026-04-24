@@ -5,7 +5,7 @@ argument-hint: "[--dry-run] [--persona NAME]"
 
 Run the githubclip heartbeat using the heartbeat skill.
 
-**Provider-aware:** automatically detects provider from `.githubclip/config.yaml` (`github` or `linear`) and routes to the appropriate heartbeat implementation.
+**GitHub-native:** reads `.githubclip/config.yaml` and executes against GitHub Projects via GitHub MCP.
 
 Arguments passed: $ARGUMENTS
 

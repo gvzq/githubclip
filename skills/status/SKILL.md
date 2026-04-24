@@ -32,21 +32,21 @@ If no log file exists, report "No heartbeat history found."
 
 ### Step 4: Current Issues
 
-Call `mcp__claude_ai_Linear__list_issues` with `assignee: "me"`. Filter and categorize:
+Use GitHub MCP to list issues assigned to the current user (`mcp__github__list_issues` with `assignee: "me"`). Filter and categorize:
 
 **Since last heartbeat** (issues that changed since the last logged heartbeat timestamp):
 - `✓` Completed issues
 - `→` In Progress issues
 - `✗` Blocked issues
-- `+` Newly created sub-issues
+- `+` Newly created issues
 
 **Queue** (next heartbeat would pick these up):
 - Issues with persona labels, status Todo or In Progress, sorted by priority
-- Show: issue ID, persona label, status, priority, title
+- Show: issue number, persona label, status, priority, title
 
 **Blocked** (needs Board attention):
 - Issues with `agent-blocked` label
-- Show: issue ID, Board user mention, blocker summary from last agent comment
+- Show: issue number, Board user mention, blocker summary from last agent comment
 
 ### Step 5: Format Output
 
@@ -56,15 +56,15 @@ githubclip Status
 Last beat:    Heartbeat #N — X min ago
 
 Since last heartbeat:
-  ✓ WOT-XX  [persona]   Completed    "Title"
-  → WOT-XX  [persona]   In Progress  "Title"
-  ✗ WOT-XX  [persona]   Blocked      "Title"
+  ✓ #XX  [persona]   Completed    "Title"
+  → #XX  [persona]   In Progress  "Title"
+  ✗ #XX  [persona]   Blocked      "Title"
 
 Queue (next heartbeat):
-  WOT-XX  [persona]  Status  Priority  "Title"
+  #XX  [persona]  Status  Priority  "Title"
 
 Blocked (needs Board):
-  WOT-XX  @User — blocker summary
+  #XX  @User — blocker summary
 ```
 
 ## History Mode
@@ -74,8 +74,8 @@ When `--history` is passed, read `.githubclip/heartbeat-log.jsonl` and display t
 ```
 Heartbeat History (last 10)
 ───────────────────────────
-#N  HH:MM  persona  WOT-XX  Status      (duration)
-#N  HH:MM  persona  WOT-XX  Status      (duration)
+#N  HH:MM  persona  #XX  Status      (duration)
+#N  HH:MM  persona  #XX  Status      (duration)
 ```
 
 If the log file doesn't exist or is empty, report "No heartbeat history found."

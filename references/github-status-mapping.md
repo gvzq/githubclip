@@ -1,6 +1,6 @@
 # GitHub Status Mapping
 
-Maps between GitHub Project custom fields and githubclip agent states for 1:1 parity with Linear.
+Maps between GitHub Project custom fields and githubclip agent states.
 
 ## Provider Context
 
@@ -79,7 +79,7 @@ Maps between GitHub Project custom fields and githubclip agent states for 1:1 pa
 
 ### Distributed Lock Safety
 
-- **Local lock:** `.githubclip/.heartbeat-lock` file (same as Linear heartbeat)
+- **Local lock:** `.githubclip/.heartbeat-lock` file
 - **Issue lock:** `agent-working` label + timestamp verification from latest heartbeat comment
 - **Dual-prevention:** On lock acquisition, check if another heartbeat is active via:
   - `agent-working` label exists

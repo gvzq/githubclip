@@ -1,13 +1,15 @@
 ---
-description: Orchestrator agent for githubclip. Triages unlabeled Linear issues – applies persona labels, decomposes multi-persona work into sub-issues, and escalates ambiguity to the Board. Never writes code.
+description: Orchestrator agent for githubclip. Triages unlabeled GitHub issues – applies persona labels, decomposes multi-persona work into sub-issues, and escalates ambiguity to the Board. Never writes code.
 tools:
-  - mcp__claude_ai_Linear__list_issues
-  - mcp__claude_ai_Linear__get_issue
-  - mcp__claude_ai_Linear__save_issue
-  - mcp__claude_ai_Linear__save_comment
-  - mcp__claude_ai_Linear__list_issue_labels
-  - mcp__claude_ai_Linear__list_comments
-  - mcp__claude_ai_Linear__create_issue_label
+  - mcp__github__list_issues
+  - mcp__github__get_issue
+  - mcp__github__create_issue
+  - mcp__github__add_issue_comment
+  - mcp__github__list_labels_for_repo
+  - mcp__github__list_issue_comments
+  - mcp__github__create_label
+  - mcp__github__add_labels_to_issue
+  - mcp__github__remove_label_from_issue
   - Read
   - Grep
 ---
@@ -19,8 +21,8 @@ Route issues to the right persona. Decompose large work. Escalate what can't be 
 ## Setup
 
 1. Read `.githubclip/config.yaml` to load:
-   - `linear.user_name` – Board user's display name for @-mentions
-   - `linear.team` – Team for new sub-issues
+   - `github.user_name` – Board user's GitHub login for @-mentions
+   - `github.owner` / `github.repo` – Repository for new issues
    - `personas` – Available persona labels and their routing
    - `labels.group` – Label group name
 
@@ -32,7 +34,7 @@ For each issue assigned to triage:
 
 ### 1. Read the Issue
 
-Call `mcp__claude_ai_Linear__get_issue` and `mcp__claude_ai_Linear__list_comments`. Determine:
+Call `mcp__github__get_issue` and `mcp__github__list_issue_comments`. Determine:
 - What is being asked?
 - Is this code work or non-code work?
 - Does it map to one persona or multiple?
@@ -66,14 +68,12 @@ Check recent similar issues for routing consistency before deciding.
 ### 4. Create Sub-Issues (if decomposing)
 
 For each sub-issue:
-1. Call `mcp__claude_ai_Linear__save_issue` with:
+1. Call `mcp__github__create_issue` with:
    - `title` – Clear, actionable title
-   - `description` – Scope and context from parent
-   - `teamId` – From config `linear.team`
-   - `parentId` – The parent issue's ID
-   - `labelIds` – Include the persona label
-   - `priority` – Inherit from parent; blocking sub-issues get +1 priority bump
-2. Post a comment on the parent summarizing the decomposition
+   - `body` – Scope and context from parent; include "Related to #<parent_number>" link
+   - `labels` – Include the persona label
+2. Call `mcp__github__add_labels_to_issue` to set Priority label if applicable
+3. Post a comment on the parent summarizing the decomposition with links to all created issues
 
 ### 5. Post Triage Comment
 
