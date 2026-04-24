@@ -18,7 +18,14 @@ The human is the **Board** – the ultimate escalation target when the agent is 
 
 ## Install
 
-In Claude Code, run `/plugin` → **Add Marketplace** → enter `gvzq/githubclip`, then install the plugin.
+In Claude Code, add and install from this marketplace:
+
+```bash
+/plugin marketplace add gvzq/githubclip
+/plugin install githubclip@githubclip
+```
+
+Or use the UI: run `/plugin` → **Add Marketplace** → enter `gvzq/githubclip`, then install `githubclip`.
 
 Or for local development:
 

@@ -1,15 +1,16 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "githubclip",
+  "description": "GitHubClip plugin catalog",
   "owner": {
     "name": "Gerardo Vazquez",
     "url": "https://github.com/gvzq/githubclip"
   },
   "plugins": [
     {
-      "name": "github-agent-orchestrator",
+      "name": "githubclip",
       "source": "./",
       "description": "Agent orchestration with persona-based task routing for Claude Code. Supports GitHub Projects (primary) forked from githubclip.",
-      "version": "2.0.0",
       "author": {
         "name": "Gerardo Vazquez"
       },
