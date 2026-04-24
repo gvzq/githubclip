@@ -4,14 +4,16 @@ label: frontend
 escalates_to: ceo
 
 required_tools:
-  - mcp__claude_ai_Linear          # Issue management
+  - github                              # GitHub issue management (if provider: github)
+  - mcp__claude_ai_Linear               # Linear issue management (if provider: linear)
   # Add repo-specific tools below:
-  # - mcp__plugin_playwright_playwright  # Browser automation
+  # - mcp__plugin_playwright_playwright # Browser automation
 
 runtime:
-  model: sonnet                    # Component work — moderate complexity
+  model: sonnet                         # Component work — moderate complexity
   thinking_effort: medium
   max_turns: 200
   enable_chrome: false
   timeout: 0
   extra_args: []
+

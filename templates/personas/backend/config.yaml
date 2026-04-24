@@ -4,14 +4,16 @@ label: backend
 escalates_to: ceo
 
 required_tools:
-  - mcp__claude_ai_Linear          # Issue management
+  - github                              # GitHub issue management (if provider: github)
+  - mcp__claude_ai_Linear               # Linear issue management (if provider: linear)
   # Add repo-specific tools below:
-  # - mcp__neon                    # Neon Postgres
+  # - mcp__neon                         # Neon Postgres
 
 runtime:
-  model: opus                      # Deep implementation needs strong reasoning
+  model: opus                           # Deep implementation needs strong reasoning
   thinking_effort: high
   max_turns: 300
   enable_chrome: false
   timeout: 0
   extra_args: []
+

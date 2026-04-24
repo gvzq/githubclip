@@ -1,17 +1,58 @@
 # WoterClip Configuration
 # Created by /woterclip-init – customize for your repo
-version: 1
+version: 2
 
-# Linear workspace settings
-linear:
-  user_name: "{{USER_NAME}}"         # Board user's display name (used in @-mentions)
-  team: "{{TEAM}}"                   # Default team for new issues/sub-issues
-  project: null                      # Optional: scope inbox to a specific project
+# Provider selection: github or linear
+provider: github
 
-# Heartbeat behavior
+# GitHub configuration (used when provider: github)
+github:
+  owner: "{{OWNER}}"                    # Repository owner (user or org)
+  repo: "{{REPO}}"                      # Repository name
+  user_name: "{{USER_NAME}}"            # GitHub login for heartbeat identity
+  
+  # GitHub Project settings
+  project:
+    owner_type: "{{PROJECT_OWNER_TYPE}}" # "user" or "org"
+    owner_login: "{{PROJECT_OWNER}}"     # Owner login (may differ from repo owner)
+    project_number: null                 # Resolved during init
+    project_id: null                     # Stable GraphQL ID (resolved during init)
+  
+  # Required custom fields (IDs resolved during init)
+  fields:
+    status:
+      field_id: null                     # GraphQL ID of Status field
+      name: "Status"                     # Display name (for documentation)
+      option_ids:
+        todo: null                       # ID for "Todo" option
+        in_progress: null                # ID for "In Progress" option
+        in_review: null                  # ID for "In Review" option
+        done: null                       # ID for "Done" option
+        canceled: null                   # ID for "Canceled" option
+    priority:
+      field_id: null                     # GraphQL ID of Priority field
+      name: "Priority"                   # Display name (for documentation)
+      option_ids:
+        urgent: null                     # ID for "Urgent" option
+        high: null                       # ID for "High" option
+        medium: null                     # ID for "Medium" option
+        low: null                        # ID for "Low" option
+        none: null                       # ID for "None" option
+  
+  # API mode: mcp_only (GitHub MCP) or mcp_then_gh (fallback to `gh api graphql`)
+  api_mode: "mcp_only"
+  
+  # Behavior flags
+  strict_mode: true                     # Enforce deterministic behavior
+  queue_source: "project_items"         # Fixed to project items only
+  close_on_done: false                  # Close issue when Status set to Done
+
+# Heartbeat behavior (cross-provider)
 heartbeat:
-  max_issues_per_heartbeat: 2        # Max issues to work per heartbeat cycle
-  stale_lock_hours: 4                # Hours before a lockfile is considered stale
+  max_issues_per_heartbeat: 2           # Max issues to work per heartbeat cycle
+  stale_lock_hours: 4                   # Hours before a lockfile is considered stale
+  max_consecutive_failures: 3           # Pause schedule after N failures
+  backoff_multiplier: 2                 # Double interval on consecutive failures
 
   # Quiet hours – skip or limit heartbeats during off-hours
   quiet_hours:
@@ -19,20 +60,15 @@ heartbeat:
     timezone: "America/Los_Angeles"
     start: "22:00"
     end: "07:00"
-    behavior: "skip"                 # "skip" = no heartbeat; "triage-only" = orchestrator triage only
+    behavior: "skip"                    # "skip" = no heartbeat; "triage-only" = orchestrator triage only
 
-  # Error cooldown – back off on repeated failures
-  cooldown:
-    max_consecutive_failures: 3      # Pause schedule after N failures
-    backoff_multiplier: 2            # Double interval on consecutive failures
-
-# Linear label configuration
+# Label configuration (GitHub labels)
 labels:
-  group: "WoterClip"                 # Parent label group (auto-created by init)
-  working: "agent-working"           # Applied while agent is working an issue
-  blocked: "agent-blocked"           # Applied when agent is blocked
+  group: "WoterClip"                    # Label group prefix (auto-created by init)
+  working: "agent-working"              # Applied while agent is working an issue
+  blocked: "agent-blocked"              # Applied when agent is blocked
 
-# Persona routing: Linear label → persona directory
+# Persona routing: GitHub label → persona directory
 # The Orchestrator (is_default: true) handles issues with no persona label
 personas:
   orchestrator:
@@ -48,3 +84,16 @@ personas:
   frontend:
     path: "personas/frontend"
     label: "frontend"
+
+# Anti-fragile mode settings
+antifragile:
+  degradation_enabled: true             # Allow progressive degradation on write failures
+  circuit_breaker_threshold: 3          # Consecutive failures before circuit break
+  canary_check_enabled: true            # Test first mutation before full run
+  reconciliation_pass_enabled: false    # Optional cleanup pass at end of heartbeat
+  recovery_journal_enabled: true        # Record action steps for crash recovery
+
+# Compatibility section for migration from Linear
+compat:
+  source_provider: null                 # "linear" if migrating from Linear
+  migration_status: "active"            # active | completed

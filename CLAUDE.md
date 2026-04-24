@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-WoterClip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides Linear-backed agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on Linear issue labels.
+WoterClip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides provider-agnostic agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on issue labels. Supports **GitHub** (primary) and **Linear** (legacy) as work item providers.
 
 **Design spec:** `docs/specs/2026-03-25-woterclip-design.md`
 **Implementation plan:** `docs/specs/2026-03-25-woterclip-implementation-plan.md`
-**Linear:** WotAI workspace, WoterClip project
+**GitHub:** Configure in `.woterclip/config.yaml` with target repo and project
+**Linear (legacy):** Available via `provider: linear` in config
 
 ## Architecture
 
@@ -17,14 +18,58 @@ WoterClip is a **Claude Code plugin** (no runtime code — entirely markdown/YAM
 1. **Plugin** (this repo) — ships commands, skills, agents, references, and persona templates. Installed via `claude plugin add`.
 2. **Per-repo scaffold** (`.woterclip/`) — created by `/woterclip-init` in target repos. Contains `config.yaml`, persona directories, heartbeat log, and lockfile.
 
-### Core loop
+### Core loop (provider-agnostic)
 
 ```
-/heartbeat → Load Config → Check Inbox (Linear) → Pick Issue → Resolve Persona
+/heartbeat → Load Config & Validate → Check Queue (Provider) → Pick Issue → Resolve Persona
   → Validate Tools → Lock Issue → Understand Context → Do Work → Report → Update State → Next/Exit
 ```
 
-The heartbeat is a **skill** (`skills/heartbeat/SKILL.md`), not code. Claude follows it as a procedure using Linear MCP tools and repo tools.
+The heartbeat is a **skill** (`skills/heartbeat/SKILL.md`), not code. Claude follows it as a procedure using provider-specific MCP tools (GitHub MCP or Linear MCP) and repo tools.
+
+### Heartbeat integration model
+
+```mermaid
+flowchart TD
+    A[/heartbeat command] --> B[Load .woterclip/config.yaml]
+    B --> C{Select provider}
+    C --> C1[GitHub adapter - primary]
+    C --> C2[Linear adapter - legacy]
+
+    C1 --> D[Fetch Project items]
+    C2 --> D[Fetch inbox items]
+
+    D --> E[Pick highest-priority item]
+    E --> F[Resolve persona from labels]
+    F --> G[Validate required tools]
+    G --> H[Acquire heartbeat lock]
+    H --> I[Understand context and execute work]
+    I --> J[Post heartbeat report/comment]
+    J --> K{Outcome}
+    K --> K1[Update Project fields + labels]
+    K --> K2[Update labels only if read-only mode]
+    K1 --> L{More actionable items?}
+    K2 --> L
+    L -->|Yes| D
+    L -->|No| M[Release lock and exit]
+
+    subgraph Provider Surface
+      C1
+      C2
+    end
+
+    subgraph Shared Heartbeat Engine
+      E
+      F
+      G
+      H
+      I
+      J
+      K
+      L
+      M
+    end
+```
 
 ### Persona system
 
@@ -44,11 +89,15 @@ Routing: Linear issue label → `personas` map in config.yaml → persona direct
 
 ### Key conventions
 
-- **Labels are the state machine.** `agent-working` and `agent-blocked` are mutually exclusive. Labels are managed via read-modify-write (get labels array → modify → save full set).
-- **Heartbeat counter is derived from comments**, not stored locally. Parse last `Heartbeat #N` from Linear comments.
+- **Provider selection:** Set `provider: github` or `provider: linear` in `.woterclip/config.yaml`
+- **Labels are the state machine (GitHub).** `agent-working` and `agent-blocked` are mutually exclusive. Managed via read-modify-write (fetch labels array → modify → save full set).
+- **Project fields store workflow state (GitHub).** Status (Todo/In Progress/In Review/Done/Canceled) and Priority (Urgent/High/Medium/Low/None) are single-select custom fields resolved to IDs during init.
+- **Heartbeat counter is derived from comments**, not stored locally. Parse last `Heartbeat #N` from issue comments.
 - **Lockfile** (`.woterclip/.heartbeat-lock`) prevents concurrent heartbeats. Must be deleted on every exit path.
 - **`${CLAUDE_PLUGIN_ROOT}`** — use this for all intra-plugin path references in commands and hooks. Never hardcode paths.
-- **Templates use `{{USER_NAME}}` and `{{TEAM}}`** placeholders — the init skill replaces these when scaffolding.
+- **Templates use `{{PLACEHOLDERS}}`** — the init skill replaces these when scaffolding (e.g., `{{OWNER}}`, `{{REPO}}`, `{{USER_NAME}}`).
+- **Config version bumps require init migration logic** — update `templates/config.yaml` version and add migration support in `skills/init/SKILL.md`.
+- **One persona label per issue.** The entire system assumes this — never design for dual-labeling.
 
 ## Plugin Component Map
 
