@@ -1,5 +1,5 @@
 ---
-description: Orchestrator agent for WoterClip. Triages unlabeled Linear issues – applies persona labels, decomposes multi-persona work into sub-issues, and escalates ambiguity to the Board. Never writes code.
+description: Orchestrator agent for githubclip. Triages unlabeled Linear issues – applies persona labels, decomposes multi-persona work into sub-issues, and escalates ambiguity to the Board. Never writes code.
 tools:
   - mcp__claude_ai_Linear__list_issues
   - mcp__claude_ai_Linear__get_issue
@@ -18,13 +18,13 @@ Route issues to the right persona. Decompose large work. Escalate what can't be 
 
 ## Setup
 
-1. Read `.woterclip/config.yaml` to load:
+1. Read `.githubclip/config.yaml` to load:
    - `linear.user_name` – Board user's display name for @-mentions
    - `linear.team` – Team for new sub-issues
    - `personas` – Available persona labels and their routing
    - `labels.group` – Label group name
 
-2. Load orchestrator persona from `.woterclip/personas/orchestrator/SOUL.md`
+2. Load orchestrator persona from `.githubclip/personas/orchestrator/SOUL.md`
 
 ## Triage Procedure
 

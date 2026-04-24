@@ -1,13 +1,13 @@
-# WoterClip Design Spec
+# githubclip Design Spec
 
 **Date:** 2026-03-25
 **Status:** Draft
 **Author:** Alex Kim + Claude
-**Linear:** [WOT-79](https://linear.app/wotai/issue/WOT-79/design-woterclip-agent-orchestration-system)
+**Linear:** [WOT-79](https://linear.app/wotai/issue/WOT-79/design-githubclip-agent-orchestration-system)
 
 ## Overview
 
-WoterClip is a Claude Code plugin that provides Linear-backed agent orchestration with persona-based task routing. It replaces Paperclip's agent system by using Linear as the task store and Claude Code's `/schedule` as the heartbeat runner.
+githubclip is a Claude Code plugin that provides Linear-backed agent orchestration with persona-based task routing. It replaces Paperclip's agent system by using Linear as the task store and Claude Code's `/schedule` as the heartbeat runner.
 
 **Core idea:** A single Claude Code instance per repo wears different "hats" (personas) based on Linear issue labels. A CEO persona triages and decomposes work. Worker personas (backend, frontend, etc.) execute it. The human is the Board — the ultimate escalation target.
 
@@ -30,17 +30,17 @@ WoterClip is a Claude Code plugin that provides Linear-backed agent orchestratio
 ## 1. Plugin Structure
 
 ```
-woterclip/
-  package.json                # Plugin manifest (name: "woterclip")
+githubclip/
+  package.json                # Plugin manifest (name: "githubclip")
   commands/
     heartbeat.md              # /heartbeat slash command
-    woterclip-init.md         # /woterclip-init slash command
-    woterclip-status.md       # /woterclip-status slash command
+    githubclip-init.md         # /githubclip-init slash command
+    githubclip-status.md       # /githubclip-status slash command
   skills/
     heartbeat/
       SKILL.md                # Core heartbeat procedure
     init/
-      SKILL.md                # Initialize WoterClip in a repo
+      SKILL.md                # Initialize githubclip in a repo
     persona-create/
       SKILL.md                # Create a new persona
     persona-list/
@@ -58,7 +58,7 @@ woterclip/
   references/
     label-conventions.md      # Standard Linear label names and meanings
     comment-format.md         # Structured comment templates
-    status-mapping.md         # Linear states <-> WoterClip states
+    status-mapping.md         # Linear states <-> githubclip states
   templates/
     config.yaml               # Default config template
     personas/
@@ -69,11 +69,11 @@ woterclip/
   README.md
 ```
 
-**Per-repo scaffolding** (created by `/woterclip-init`):
+**Per-repo scaffolding** (created by `/githubclip-init`):
 
 ```
 <target-repo>/
-  .woterclip/
+  .githubclip/
     config.yaml             # Repo-level config
     personas/
       ceo/
@@ -92,7 +92,7 @@ The core loop that runs on every `/schedule` trigger or manual `/heartbeat` invo
 
 ### Steps
 
-1. **Load Config** — Read `.woterclip/config.yaml`. Verify Linear MCP is available. Check for lockfile (`.woterclip/.heartbeat-lock`). If lockfile exists and is less than `stale_lock_hours` old, skip this heartbeat ("previous heartbeat still active"). If stale, delete lockfile and proceed. Create lockfile with current timestamp. Delete lockfile on exit (including error paths).
+1. **Load Config** — Read `.githubclip/config.yaml`. Verify Linear MCP is available. Check for lockfile (`.githubclip/.heartbeat-lock`). If lockfile exists and is less than `stale_lock_hours` old, skip this heartbeat ("previous heartbeat still active"). If stale, delete lockfile and proceed. Create lockfile with current timestamp. Delete lockfile on exit (including error paths).
 
 2. **Check Inbox** — Query Linear via `mcp__claude_ai_Linear__list_issues` with `assignee: "me"`. The Linear MCP only accepts a single `state` filter, so fetch all issues for the assignee (no state filter), then filter and sort client-side. Sort by status (in_progress > todo), then by Linear priority (critical > low). Skip issues without a persona label. Skip `agent-blocked` issues unless new comments exist since last agent comment. Detect stale `agent-working` labels (older than `stale_lock_hours`) by checking comment timestamps — clean up stale lock, post a comment about it.
 
@@ -102,13 +102,13 @@ The core loop that runs on every `/schedule` trigger or manual `/heartbeat` invo
 
 5. **Validate Tools** — Check persona's `required_tools` are available. The `required_tools` field uses **prefix matching** — `mcp__claude_ai_Linear` matches any `mcp__claude_ai_Linear__*` tool. Missing tool prefix → block immediately with specific error message.
 
-6. **Lock** — Read the issue's current labels via `mcp__claude_ai_Linear__get_issue`. Append `agent-working` to the existing labels array. Save via `mcp__claude_ai_Linear__save_issue` with the full label set. If `agent-working` is already present (same agent, previous beat), proceed without re-saving. **Note:** Label updates are a read-modify-write cycle. This is acceptable because WoterClip runs as a single instance per repo — no concurrent writers.
+6. **Lock** — Read the issue's current labels via `mcp__claude_ai_Linear__get_issue`. Append `agent-working` to the existing labels array. Save via `mcp__claude_ai_Linear__save_issue` with the full label set. If `agent-working` is already present (same agent, previous beat), proceed without re-saving. **Note:** Label updates are a read-modify-write cycle. This is acceptable because githubclip runs as a single instance per repo — no concurrent writers.
 
-7. **Understand Context** — Read issue title, description, comments. Read parent issue if exists. Check for new comments since last heartbeat. Parse the heartbeat counter from the last WoterClip comment (look for `Heartbeat #N` pattern). If no previous comment, start at #1.
+7. **Understand Context** — Read issue title, description, comments. Read parent issue if exists. Check for new comments since last heartbeat. Parse the heartbeat counter from the last githubclip comment (look for `Heartbeat #N` pattern). If no previous comment, start at #1.
 
 8. **Do Work** — Follow persona instructions (SOUL.md). Use repo tools. For large scope: create Linear sub-issues via `mcp__claude_ai_Linear__save_issue` with `team` from repo config, `parentId` set to the current issue, and appropriate persona labels. For small scope: use internal Claude Code tasks. If Linear MCP becomes unavailable mid-work, stop work, leave `agent-working` label in place (will be cleaned as stale lock on next heartbeat), and exit with error log.
 
-9. **Report** — Post structured comment on Linear issue via `mcp__claude_ai_Linear__save_comment`. Include heartbeat counter (incremented from step 7). Store heartbeat metadata to `.woterclip/heartbeat-log.jsonl` (timestamp, issue ID, persona, duration, status, heartbeat number) for `/woterclip-status --history`.
+9. **Report** — Post structured comment on Linear issue via `mcp__claude_ai_Linear__save_comment`. Include heartbeat counter (incremented from step 7). Store heartbeat metadata to `.githubclip/heartbeat-log.jsonl` (timestamp, issue ID, persona, duration, status, heartbeat number) for `/githubclip-status --history`.
 
 10. **Update State** — Read the issue's current labels, then modify:
     - **Done** → remove `agent-working` from labels array, save. Update issue state to the appropriate Linear status.
@@ -123,15 +123,15 @@ Before working an `agent-blocked` issue, read its comment thread. If the agent's
 
 ### Heartbeat Counter Persistence
 
-The heartbeat counter is **derived from Linear comments**, not stored locally. On each heartbeat, parse the last WoterClip comment on the issue for `Heartbeat #N` and increment. If comments are deleted, the counter resets — this is acceptable as the counter is informational, not functional.
+The heartbeat counter is **derived from Linear comments**, not stored locally. On each heartbeat, parse the last githubclip comment on the issue for `Heartbeat #N` and increment. If comments are deleted, the counter resets — this is acceptable as the counter is informational, not functional.
 
 ### Overlap Prevention
 
-A lockfile at `.woterclip/.heartbeat-lock` prevents concurrent heartbeats. Created at step 1, deleted at step 11 (and in error handlers). Stale lockfiles (older than `stale_lock_hours`) are auto-cleaned.
+A lockfile at `.githubclip/.heartbeat-lock` prevents concurrent heartbeats. Created at step 1, deleted at step 11 (and in error handlers). Stale lockfiles (older than `stale_lock_hours`) are auto-cleaned.
 
 ### Differences from Paperclip
 
-| Paperclip | WoterClip |
+| Paperclip | githubclip |
 |-----------|-----------|
 | `POST /checkout` API | `agent-working` Linear label |
 | `GET /api/agents/me` | Read config.yaml + persona files |
@@ -149,7 +149,7 @@ Each persona gets its own directory, inspired by Paperclip's agent structure.
 
 ### File Mapping from Paperclip
 
-| Paperclip File | WoterClip Equivalent | Purpose |
+| Paperclip File | githubclip Equivalent | Purpose |
 |----------------|---------------------|---------|
 | `SOUL.md` | `SOUL.md` | Identity, posture, voice, decision framework |
 | `AGENTS.md` | `config.yaml` (repo-level) | Agent config, home refs, safety rules |
@@ -227,7 +227,7 @@ The CEO never writes code. It triages, decomposes, coordinates, and escalates.
 ### Repo-Level Config
 
 ```yaml
-# .woterclip/config.yaml
+# .githubclip/config.yaml
 version: 1
 
 linear:
@@ -251,7 +251,7 @@ heartbeat:
     backoff_multiplier: 2
 
 labels:
-  group: "WoterClip"             # Parent label group in Linear (auto-created by init)
+  group: "githubclip"             # Parent label group in Linear (auto-created by init)
   working: "agent-working"
   blocked: "agent-blocked"
 
@@ -283,13 +283,13 @@ When `behavior: "triage-only"`, the heartbeat runs CEO persona only:
 - Post triage comments as normal
 - Useful for overnight label routing without code changes
 
-### `/woterclip-init` Flow
+### `/githubclip-init` Flow
 
 1. Check Linear MCP is available → fail with helpful error if not
 2. Fetch Linear user info → auto-fill `user_id` and `user_name`
 3. Fetch Linear teams → let user pick team
 4. Ask which personas to scaffold (presets: "engineering", "marketing", "custom")
-5. Create "WoterClip" label group in Linear, then create `agent-working` and `agent-blocked` as child labels, plus persona labels (e.g., `backend`, `frontend`)
+5. Create "githubclip" label group in Linear, then create `agent-working` and `agent-blocked` as child labels, plus persona labels (e.g., `backend`, `frontend`)
 6. Write `config.yaml` and persona directories with templates
 7. Offer to set up recurring heartbeat schedule
 8. Print summary of what was created
@@ -318,7 +318,7 @@ When `behavior: "triage-only"`, the heartbeat runs CEO persona only:
 None
 
 ---
-*WoterClip · backend · [WOT-79](link) · from [Heartbeat #2](link)*
+*githubclip · backend · [WOT-79](link) · from [Heartbeat #2](link)*
 ```
 
 ### Blocked Template
@@ -341,7 +341,7 @@ for generating a new one.
 - Added signature verification logic
 
 ---
-*WoterClip · backend · [WOT-82](link)*
+*githubclip · backend · [WOT-82](link)*
 ```
 
 ### Comment Rules
@@ -424,10 +424,10 @@ If a previous heartbeat is still active when the next triggers, skip the beat an
 
 Configurable time window where heartbeats are skipped or limited to triage-only.
 
-### `/woterclip-status` Output
+### `/githubclip-status` Output
 
 ```
-WoterClip Status
+githubclip Status
 ────────────────
 Schedule:     Every 30 min (active)
 Last beat:    Heartbeat #7 — 12 min ago
@@ -449,7 +449,7 @@ Blocked (needs Board):
 ### Heartbeat History
 
 ```
-/woterclip-status --history
+/githubclip-status --history
 
 Heartbeat History (last 5)
 ──────────────────────────
@@ -464,8 +464,8 @@ Heartbeat History (last 5)
 
 ### For Users (Plugin Install)
 
-1. Install WoterClip plugin from marketplace
-2. Run `/woterclip-init` in any repo
+1. Install githubclip plugin from marketplace
+2. Run `/githubclip-init` in any repo
 3. Customize personas for that repo's stack
 4. Run `/heartbeat` or set up `/schedule`
 
@@ -484,11 +484,11 @@ Persona directories are self-contained. Users can:
 
 ## 9. Persona Import from Paperclip
 
-The `/persona-import` skill converts Paperclip agent directories into WoterClip persona directories.
+The `/persona-import` skill converts Paperclip agent directories into githubclip persona directories.
 
 ### Mapping
 
-| Paperclip File | WoterClip Target | What's Imported |
+| Paperclip File | githubclip Target | What's Imported |
 |----------------|-----------------|-----------------|
 | `SOUL.md` | `SOUL.md` | Copied as-is (identity, posture, voice) |
 | `HEARTBEAT.md` | Skipped | Replaced by plugin's generic heartbeat. Role-specific responsibilities (bottom section) are appended to SOUL.md |
@@ -499,7 +499,7 @@ The `/persona-import` skill converts Paperclip agent directories into WoterClip 
 
 ### What's NOT Imported
 
-- **Budget tracking** — Paperclip budget fields have no WoterClip equivalent
+- **Budget tracking** — Paperclip budget fields have no githubclip equivalent
 - **Approval workflows** — Intentionally omitted from v1 (see Future Work)
 - **PARA memory system** — Replaced by Claude Code built-in memory
 - **Agent hiring** — Replaced by `/persona-create`
@@ -508,17 +508,17 @@ The `/persona-import` skill converts Paperclip agent directories into WoterClip 
 
 ### Heartbeat Log
 
-Each heartbeat appends a JSON line to `.woterclip/heartbeat-log.jsonl`:
+Each heartbeat appends a JSON line to `.githubclip/heartbeat-log.jsonl`:
 
 ```json
 {"heartbeat": 7, "timestamp": "2026-03-25T10:15:00Z", "issue": "WOT-79", "persona": "backend", "duration_sec": 720, "status": "in_progress", "actions": ["committed a1b2c3d", "created sub-issue WOT-83"]}
 ```
 
-This powers `/woterclip-status --history`. The file is append-only and can be safely truncated (informational, not functional).
+This powers `/githubclip-status --history`. The file is append-only and can be safely truncated (informational, not functional).
 
 ### Lockfile
 
-`.woterclip/.heartbeat-lock` contains the timestamp when the current heartbeat started. Auto-deleted on exit. Stale locks (older than `stale_lock_hours`) are auto-cleaned.
+`.githubclip/.heartbeat-lock` contains the timestamp when the current heartbeat started. Auto-deleted on exit. Stale locks (older than `stale_lock_hours`) are auto-cleaned.
 
 ### Label State
 
@@ -535,7 +535,7 @@ All agent state labels (`agent-working`, `agent-blocked`) live in Linear. No loc
 
 ## Appendix: Comparison to Paperclip
 
-| Capability | Paperclip | WoterClip |
+| Capability | Paperclip | githubclip |
 |-----------|-----------|-----------|
 | Task store | Paperclip API | Linear |
 | Heartbeat runner | Paperclip scheduler | Claude Code `/schedule` |

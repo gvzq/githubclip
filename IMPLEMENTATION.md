@@ -4,7 +4,7 @@ This document summarizes the complete implementation of the GitHub MCP 1:1 Heart
 
 ## Overview
 
-WoterClip has been successfully migrated to support **GitHub Projects (v2)** as a primary provider, with Linear available as legacy support. The implementation maintains strict 1:1 behavioral parity with Linear while introducing anti-fragile safeguards for production reliability.
+githubclip has been successfully migrated to support **GitHub Projects (v2)** as a primary provider, with Linear available as legacy support. The implementation maintains strict 1:1 behavioral parity with Linear while introducing anti-fragile safeguards for production reliability.
 
 **Implementation Status:** ✅ Complete (Phase 0-2, Phases 3-4 require execution/validation)
 
@@ -64,7 +64,7 @@ WoterClip has been successfully migrated to support **GitHub Projects (v2)** as 
   - Added provider-aware language
   - Documented anti-fragile behaviors
 
-- **`commands/woterclip-init.md`** (UPDATED)
+- **`commands/githubclip-init.md`** (UPDATED)
   - Converted to GitHub setup instructions
   - Added GitHub Project and field setup steps
 
@@ -124,7 +124,7 @@ WoterClip has been successfully migrated to support **GitHub Projects (v2)** as 
    - If drift detected → stop with repair instructions before queue execution
 
 5. **Recovery Journal**
-   - Machine-readable action records in `.woterclip/heartbeat-log.jsonl`
+   - Machine-readable action records in `.githubclip/heartbeat-log.jsonl`
    - Supports crash recovery and session resume
 
 6. **Idempotent Re-Init**
@@ -199,7 +199,7 @@ heartbeat:  # cross-provider
     behavior: "skip"
 
 labels:  # cross-provider
-  group: "WoterClip"
+  group: "githubclip"
   working: "agent-working"
   blocked: "agent-blocked"
 
@@ -289,7 +289,7 @@ compat:
 ## Migration Path
 
 **Immediate (Phase 1-2):**
-1. Run `/woterclip-init` in target GitHub repo
+1. Run `/githubclip-init` in target GitHub repo
 2. Test `/heartbeat --dry-run`
 3. Run `/heartbeat` for first issue pick-up
 
@@ -307,7 +307,7 @@ compat:
 
 If severe issues arise:
 
-1. Update `.woterclip/config.yaml`:
+1. Update `.githubclip/config.yaml`:
    ```yaml
    provider: linear
    ```

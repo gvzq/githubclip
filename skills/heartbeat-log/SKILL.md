@@ -1,12 +1,12 @@
 ---
 name: heartbeat-log
-description: This skill should be used when the user asks to "show heartbeat log", "heartbeat history", "what has woterclip done", "show agent activity", "summarize heartbeats", or wants to analyze past heartbeat activity. Parses heartbeat-log.jsonl for summaries and analytics.
+description: This skill should be used when the user asks to "show heartbeat log", "heartbeat history", "what has githubclip done", "show agent activity", "summarize heartbeats", or wants to analyze past heartbeat activity. Parses heartbeat-log.jsonl for summaries and analytics.
 version: 0.1.0
 ---
 
 # Heartbeat Log
 
-Parse and summarize the WoterClip heartbeat log file (`.woterclip/heartbeat-log.jsonl`).
+Parse and summarize the githubclip heartbeat log file (`.githubclip/heartbeat-log.jsonl`).
 
 ## Log Format
 
@@ -19,7 +19,7 @@ Each line is a JSON object:
 
 ### Step 1: Read Log
 
-Read `.woterclip/heartbeat-log.jsonl`. If missing or empty, report "No heartbeat history found."
+Read `.githubclip/heartbeat-log.jsonl`. If missing or empty, report "No heartbeat history found."
 
 Parse each line as JSON. Handle malformed lines gracefully (skip with warning).
 

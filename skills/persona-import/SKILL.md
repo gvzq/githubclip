@@ -1,21 +1,21 @@
 ---
 name: persona-import
-description: This skill should be used when the user asks to "import a paperclip agent", "convert paperclip to woterclip", "migrate from paperclip", "import persona from paperclip", or wants to convert existing Paperclip agent directories into WoterClip persona format.
+description: This skill should be used when the user asks to "import a paperclip agent", "convert paperclip to githubclip", "migrate from paperclip", "import persona from paperclip", or wants to convert existing Paperclip agent directories into githubclip persona format.
 version: 0.1.0
 ---
 
 # Import Persona from Paperclip
 
-Convert a Paperclip agent directory into a WoterClip persona. Maps Paperclip's agent structure (SOUL.md, AGENTS.md, HEARTBEAT.md, TOOLS.md) to WoterClip's persona structure (SOUL.md, TOOLS.md, config.yaml).
+Convert a Paperclip agent directory into a githubclip persona. Maps Paperclip's agent structure (SOUL.md, AGENTS.md, HEARTBEAT.md, TOOLS.md) to githubclip's persona structure (SOUL.md, TOOLS.md, config.yaml).
 
 ## Prerequisites
 
-- `.woterclip/config.yaml` must exist (run `/woterclip-init` first)
+- `.githubclip/config.yaml` must exist (run `/githubclip-init` first)
 - User must provide the path to the Paperclip agent directory
 
 ## File Mapping
 
-| Paperclip File | WoterClip Target | What to Import |
+| Paperclip File | githubclip Target | What to Import |
 |----------------|-----------------|----------------|
 | `SOUL.md` | `SOUL.md` | Copy as-is — identity, posture, voice |
 | `HEARTBEAT.md` | Append to `SOUL.md` | Only the role-specific responsibilities section (bottom). Skip the generic heartbeat procedure (top) — replaced by the plugin's heartbeat skill |
@@ -49,7 +49,7 @@ Ask the user:
 1. Start with the Paperclip `SOUL.md` content
 2. From `HEARTBEAT.md`: extract the role-specific section (usually the bottom half, after the generic heartbeat steps). Append as a "## Working Style" or "## Role Responsibilities" section
 3. From `AGENTS.md`: extract safety rules and boundaries. Append to the "## Boundaries" section
-4. Add a WoterClip-specific "## Quality Checklist" section if not present
+4. Add a githubclip-specific "## Quality Checklist" section if not present
 5. Drop any Paperclip-specific references (workspace paths, PARA memory, budget tracking)
 
 ### Step 4: Transform TOOLS.md
@@ -87,9 +87,9 @@ runtime:
 
 ### Step 6: Write Files
 
-1. Create `.woterclip/personas/<label>/`
+1. Create `.githubclip/personas/<label>/`
 2. Write `SOUL.md`, `TOOLS.md`, `config.yaml`
-3. Update `.woterclip/config.yaml` to add the persona to the `personas` map
+3. Update `.githubclip/config.yaml` to add the persona to the `personas` map
 4. Create the Linear label if it doesn't exist
 
 ### Step 7: Summary
@@ -100,9 +100,9 @@ Imported: <Name> (from <source-path>)
   Model:    <model>
 
 Files created:
-  ✓ .woterclip/personas/<label>/SOUL.md
-  ✓ .woterclip/personas/<label>/TOOLS.md
-  ✓ .woterclip/personas/<label>/config.yaml
+  ✓ .githubclip/personas/<label>/SOUL.md
+  ✓ .githubclip/personas/<label>/TOOLS.md
+  ✓ .githubclip/personas/<label>/config.yaml
 
 What was imported:
   ✓ SOUL.md — identity and posture
@@ -111,7 +111,7 @@ What was imported:
   ✓ TOOLS.md — tool list (Paperclip refs replaced)
 
 What was NOT imported:
-  ✗ Budget tracking (no WoterClip equivalent)
+  ✗ Budget tracking (no githubclip equivalent)
   ✗ PARA memory (replaced by Claude Code built-in memory)
   ✗ Approval workflows (not in v1)
 

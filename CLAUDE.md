@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-WoterClip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides provider-agnostic agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on issue labels. Supports **GitHub** (primary) and **Linear** (legacy) as work item providers.
+githubclip is a **Claude Code plugin** (no runtime code — entirely markdown/YAML). It provides provider-agnostic agent orchestration with persona-based task routing. A single Claude instance wears different "hats" (personas) based on issue labels. Supports **GitHub** (primary) and **Linear** (legacy) as work item providers.
 
-**Design spec:** `docs/specs/2026-03-25-woterclip-design.md`
-**Implementation plan:** `docs/specs/2026-03-25-woterclip-implementation-plan.md`
-**GitHub:** Configure in `.woterclip/config.yaml` with target repo and project
+**Design spec:** `docs/specs/2026-03-25-githubclip-design.md`
+**Implementation plan:** `docs/specs/2026-03-25-githubclip-implementation-plan.md`
+**GitHub:** Configure in `.githubclip/config.yaml` with target repo and project
 **Linear (legacy):** Available via `provider: linear` in config
 
 ## Architecture
@@ -16,7 +16,7 @@ WoterClip is a **Claude Code plugin** (no runtime code — entirely markdown/YAM
 ### Two-level structure
 
 1. **Plugin** (this repo) — ships commands, skills, agents, references, and persona templates. Installed via `claude plugin add`.
-2. **Per-repo scaffold** (`.woterclip/`) — created by `/woterclip-init` in target repos. Contains `config.yaml`, persona directories, heartbeat log, and lockfile.
+2. **Per-repo scaffold** (`.githubclip/`) — created by `/githubclip-init` in target repos. Contains `config.yaml`, persona directories, heartbeat log, and lockfile.
 
 ### Core loop (provider-agnostic)
 
@@ -31,7 +31,7 @@ The heartbeat is a **skill** (`skills/heartbeat/SKILL.md`), not code. Claude fol
 
 ```mermaid
 flowchart TD
-    A[/heartbeat command] --> B[Load .woterclip/config.yaml]
+    A[/heartbeat command] --> B[Load .githubclip/config.yaml]
     B --> C{Select provider}
     C --> C1[GitHub adapter - primary]
     C --> C2[Linear adapter - legacy]
@@ -89,11 +89,11 @@ Routing: Linear issue label → `personas` map in config.yaml → persona direct
 
 ### Key conventions
 
-- **Provider selection:** Set `provider: github` or `provider: linear` in `.woterclip/config.yaml`
+- **Provider selection:** Set `provider: github` or `provider: linear` in `.githubclip/config.yaml`
 - **Labels are the state machine (GitHub).** `agent-working` and `agent-blocked` are mutually exclusive. Managed via read-modify-write (fetch labels array → modify → save full set).
 - **Project fields store workflow state (GitHub).** Status (Todo/In Progress/In Review/Done/Canceled) and Priority (Urgent/High/Medium/Low/None) are single-select custom fields resolved to IDs during init.
 - **Heartbeat counter is derived from comments**, not stored locally. Parse last `Heartbeat #N` from issue comments.
-- **Lockfile** (`.woterclip/.heartbeat-lock`) prevents concurrent heartbeats. Must be deleted on every exit path.
+- **Lockfile** (`.githubclip/.heartbeat-lock`) prevents concurrent heartbeats. Must be deleted on every exit path.
 - **`${CLAUDE_PLUGIN_ROOT}`** — use this for all intra-plugin path references in commands and hooks. Never hardcode paths.
 - **Templates use `{{PLACEHOLDERS}}`** — the init skill replaces these when scaffolding (e.g., `{{OWNER}}`, `{{REPO}}`, `{{USER_NAME}}`).
 - **Config version bumps require init migration logic** — update `templates/config.yaml` version and add migration support in `skills/init/SKILL.md`.
@@ -115,7 +115,7 @@ Routing: Linear issue label → `personas` map in config.yaml → persona direct
 
 This repo has no build system, no tests, no dependencies. "Development" means editing markdown and YAML files.
 
-**To test the plugin locally:** `claude --plugin-dir /Users/alexkim/Documents/Github-Mac-2026/woterclip`
+**To test the plugin locally:** `claude --plugin-dir /Users/alexkim/Documents/Github-Mac-2026/githubclip`
 
 **Validation checklist:**
 - YAML files parse cleanly (`python3 -c "import yaml; yaml.safe_load(open('file.yaml'))"`)

@@ -1,4 +1,4 @@
-# WoterClip
+# githubclip
 
 Linear-backed agent orchestration for Claude Code. A single Claude instance wears different "hats" (personas) based on Linear issue labels – an Orchestrator routes work, a CEO makes strategic calls, and worker personas execute.
 
@@ -18,13 +18,13 @@ The human is the **Board** – the ultimate escalation target when the agent is 
 
 ## Install
 
-In Claude Code, run `/plugin` → **Add Marketplace** → enter `wotai-dev/woterclip`, then install the plugin.
+In Claude Code, run `/plugin` → **Add Marketplace** → enter `gvzq/githubclip`, then install the plugin.
 
 Or for local development:
 
 ```bash
-git clone https://github.com/wotai-dev/woterclip.git
-claude --plugin-dir /path/to/woterclip
+git clone https://github.com/gvzq/githubclip.git
+claude --plugin-dir /path/to/githubclip
 ```
 
 ### Prerequisites
@@ -47,8 +47,8 @@ claude --plugin-dir /path/to/woterclip
 ## Quick Start
 
 ```bash
-# 1. Initialize WoterClip in your repo (creates config + personas + Linear labels)
-/woterclip-init
+# 1. Initialize githubclip in your repo (creates config + personas + Linear labels)
+/githubclip-init
 
 # 2. Run a single heartbeat cycle
 /heartbeat
@@ -57,14 +57,14 @@ claude --plugin-dir /path/to/woterclip
 /schedule 30m /heartbeat
 
 # 4. Check status
-/woterclip-status
+/githubclip-status
 ```
 
 ## The Heartbeat Loop
 
 Each `/heartbeat` runs an 11-step cycle:
 
-1. **Load config** – read `.woterclip/config.yaml`, check lockfile
+1. **Load config** – read `.githubclip/config.yaml`, check lockfile
 2. **Check inbox** – query Linear for assigned issues, filter and sort
 3. **Pick issue** – highest priority In Progress, then Todo
 4. **Resolve persona** – match issue label → persona directory, load SOUL.md + TOOLS.md
@@ -101,10 +101,10 @@ Create custom personas with `/persona-create` or copy directories between repos.
 
 ### Per-Repo Structure
 
-After `/woterclip-init`, your repo gets:
+After `/githubclip-init`, your repo gets:
 
 ```
-.woterclip/
+.githubclip/
 ├── config.yaml              # Linear settings, heartbeat behavior, persona routing
 ├── heartbeat-log.jsonl      # Append-only heartbeat history (created at runtime)
 └── personas/
@@ -133,15 +133,15 @@ After `/woterclip-init`, your repo gets:
 | `/heartbeat` | Run one heartbeat cycle |
 | `/heartbeat --dry-run` | Show what would be picked up |
 | `/heartbeat --persona backend` | Force a specific persona |
-| `/woterclip-init` | Initialize WoterClip in a repo |
-| `/woterclip-status` | Current state, queue, blocked issues |
-| `/woterclip-status --history` | Recent heartbeat history |
+| `/githubclip-init` | Initialize githubclip in a repo |
+| `/githubclip-status` | Current state, queue, blocked issues |
+| `/githubclip-status --history` | Recent heartbeat history |
 | `/persona-create` | Create a new persona interactively |
 | `/persona-list` | List configured personas |
 
 ## Label System
 
-WoterClip uses Linear labels for state management:
+githubclip uses Linear labels for state management:
 
 | Label | Purpose |
 |-------|---------|
@@ -149,7 +149,7 @@ WoterClip uses Linear labels for state management:
 | `agent-blocked` | Agent is blocked, needs Board attention |
 | `backend`, `frontend`, etc. | Routes issue to the matching persona |
 
-All labels live under a "WoterClip" parent group in Linear, created by `/woterclip-init`.
+All labels live under a "githubclip" parent group in Linear, created by `/githubclip-init`.
 
 ## Schedule Cadences
 
@@ -162,15 +162,15 @@ All labels live under a "WoterClip" parent group in Linear, created by `/wotercl
 
 ## Migrating from Paperclip
 
-Use `/persona-import` to convert Paperclip agent directories into WoterClip personas. It maps SOUL.md, TOOLS.md, HEARTBEAT.md role-specific sections, and AGENTS.md safety rules into the WoterClip format. Budget tracking, PARA memory, and approval workflows are not imported (replaced by Claude Code built-in features or intentionally omitted from v1).
+Use `/persona-import` to convert Paperclip agent directories into githubclip personas. It maps SOUL.md, TOOLS.md, HEARTBEAT.md role-specific sections, and AGENTS.md safety rules into the githubclip format. Budget tracking, PARA memory, and approval workflows are not imported (replaced by Claude Code built-in features or intentionally omitted from v1).
 
 ## Background
 
-WoterClip is inspired by [Paperclip](https://github.com/paperclipai/paperclip), an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. WoterClip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by Linear instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
+githubclip is inspired by [Paperclip](https://github.com/paperclipai/paperclip), an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. githubclip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by Linear instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
 
 ## Design
 
-See [`docs/specs/2026-03-25-woterclip-design.md`](docs/specs/2026-03-25-woterclip-design.md) for the full design spec and [`docs/specs/2026-03-25-woterclip-implementation-plan.md`](docs/specs/2026-03-25-woterclip-implementation-plan.md) for the build order.
+See [`docs/specs/2026-03-25-githubclip-design.md`](docs/specs/2026-03-25-githubclip-design.md) for the full design spec and [`docs/specs/2026-03-25-githubclip-implementation-plan.md`](docs/specs/2026-03-25-githubclip-implementation-plan.md) for the build order.
 
 ## License
 

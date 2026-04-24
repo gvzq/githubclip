@@ -1,6 +1,6 @@
 # GitHub MCP 1:1 Verification Checklist
 
-This document outlines the validation steps to verify WoterClip's GitHub MCP integration provides 1:1 behavioral parity with Linear and meets plan requirements.
+This document outlines the validation steps to verify githubclip's GitHub MCP integration provides 1:1 behavioral parity with Linear and meets plan requirements.
 
 ## Pre-Implementation Validation
 
@@ -25,7 +25,7 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('â
 - [ ] `skills/heartbeat/SKILL.md` has valid frontmatter (`name`, `description`, `version`)
 - [ ] `skills/init/SKILL.md` has valid frontmatter (`name`, `description`, `version`)
 - [ ] `commands/heartbeat.md` has valid frontmatter (`description`, `argument-hint`)
-- [ ] `commands/woterclip-init.md` has valid frontmatter (`description`)
+- [ ] `commands/githubclip-init.md` has valid frontmatter (`description`)
 
 ### Reference Documentation
 
@@ -39,7 +39,7 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('â
 
 ### Queue Building and Ranking
 
-1. **Setup:** Initialize WoterClip in a GitHub repo with at least 3-5 test issues in a GitHub Project
+1. **Setup:** Initialize githubclip in a GitHub repo with at least 3-5 test issues in a GitHub Project
 
 2. **Dry-run test:**
    ```
@@ -190,7 +190,7 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('â
 2. **Crash simulation:**
    - [ ] Start heartbeat on multiple issues
    - [ ] Interrupt mid-work (e.g., kill Claude session)
-   - [ ] `.woterclip/heartbeat-log.jsonl` contains partial records
+   - [ ] `.githubclip/heartbeat-log.jsonl` contains partial records
    - [ ] Next heartbeat reads log and resumes from last known state
 
 ### Schema Drift Sentry
@@ -206,7 +206,7 @@ python3 -c "import yaml; yaml.safe_load(open('templates/config.yaml')); print('â
 ### Idempotent Re-Init
 
 1. **Run init once:**
-   - [ ] `.woterclip/config.yaml` created with all field IDs
+   - [ ] `.githubclip/config.yaml` created with all field IDs
    - [ ] Project fields are created
    - [ ] Labels are created
 

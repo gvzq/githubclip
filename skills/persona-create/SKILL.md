@@ -1,16 +1,16 @@
 ---
 name: persona-create
-description: This skill should be used when the user asks to "create a persona", "add a new persona", "set up a new agent role", "add a woterclip persona", or runs the /persona-create command. Interactively creates a new WoterClip persona with SOUL.md, TOOLS.md, and config.yaml.
+description: This skill should be used when the user asks to "create a persona", "add a new persona", "set up a new agent role", "add a githubclip persona", or runs the /persona-create command. Interactively creates a new githubclip persona with SOUL.md, TOOLS.md, and config.yaml.
 version: 0.1.0
 ---
 
 # Create Persona
 
-Interactively create a new WoterClip persona for this repository.
+Interactively create a new githubclip persona for this repository.
 
 ## Prerequisites
 
-Verify `.woterclip/config.yaml` exists. If not, instruct the user to run `/woterclip-init` first.
+Verify `.githubclip/config.yaml` exists. If not, instruct the user to run `/githubclip-init` first.
 
 ## Procedure
 
@@ -70,12 +70,12 @@ runtime:
 
 ### Step 5: Write Files
 
-1. Create `.woterclip/personas/<label>/` directory
+1. Create `.githubclip/personas/<label>/` directory
 2. Write `SOUL.md`, `TOOLS.md`, `config.yaml`
 
 ### Step 6: Update Config
 
-Read `.woterclip/config.yaml` and add the new persona to the `personas` map:
+Read `.githubclip/config.yaml` and add the new persona to the `personas` map:
 
 ```yaml
 <label>:
@@ -85,7 +85,7 @@ Read `.woterclip/config.yaml` and add the new persona to the `personas` map:
 
 ### Step 7: Create Linear Label
 
-Call `mcp__claude_ai_Linear__list_issue_labels` to check if the label exists. If not, create it under the WoterClip group via `mcp__claude_ai_Linear__create_issue_label`.
+Call `mcp__claude_ai_Linear__list_issue_labels` to check if the label exists. If not, create it under the githubclip group via `mcp__claude_ai_Linear__create_issue_label`.
 
 ### Step 8: Summary
 
@@ -94,14 +94,14 @@ Persona created: <Name>
   Label:    <label>
   Model:    <model>
   Escalates: <escalates_to>
-  Path:     .woterclip/personas/<label>/
+  Path:     .githubclip/personas/<label>/
 
 Files:
   ✓ SOUL.md
   ✓ TOOLS.md
   ✓ config.yaml
 
-Linear label "<label>" created under WoterClip group.
+Linear label "<label>" created under githubclip group.
 
 Customize SOUL.md to match your project's specific needs.
 ```

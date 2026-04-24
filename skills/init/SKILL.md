@@ -1,12 +1,12 @@
 ---
-name: woterclip-init
-description: This skill should be used when the user asks to "initialize woterclip", "set up woterclip", "woterclip init", "configure woterclip for this repo", or runs the /woterclip-init command. Scaffolds a repo with WoterClip config, persona directories, and GitHub labels/Project fields.
+name: githubclip-init
+description: This skill should be used when the user asks to "initialize githubclip", "set up githubclip", "githubclip init", "configure githubclip for this repo", or runs the /githubclip-init command. Scaffolds a repo with githubclip config, persona directories, and GitHub labels/Project fields.
 version: 2.0.0
 ---
 
-# WoterClip Initialization (GitHub)
+# githubclip Initialization (GitHub)
 
-Initialize WoterClip in the current GitHub repository. This creates the `.woterclip/` directory with config, persona templates, GitHub labels, and validates/creates a GitHub Project with required custom fields.
+Initialize githubclip in the current GitHub repository. This creates the `.githubclip/` directory with config, persona templates, GitHub labels, and validates/creates a GitHub Project with required custom fields.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ Before starting, verify the GitHub MCP is available:
    - Ensure GitHub CLI (`gh`) is authenticated: `gh auth status`
    - Add GitHub MCP to `.mcp.json` or global MCP config
    - Restart Claude Code session
-   - Re-run `/woterclip-init`
+   - Re-run `/githubclip-init`
 
 ## Initialization Procedure
 
@@ -51,7 +51,7 @@ For "custom", ask the user to name each persona and its label.
 
 ### Step 3: Select or Create GitHub Project
 
-1. Ask: "Do you have an existing GitHub Project (v2) for this work, or should WoterClip create one?"
+1. Ask: "Do you have an existing GitHub Project (v2) for this work, or should githubclip create one?"
    - **Existing:** Ask for project number or URL, then validate/inspect fields
    - **Create:** Ask owner (user or org), create new project, then proceed to schema enforcement
 
@@ -64,7 +64,7 @@ For "custom", ask the user to name each persona and its label.
 
 3. **If creating new project:**
    - Use GitHub MCP to create project under selected owner
-   - Name: suggest "`Repo Name - WoterClip`" (user can customize)
+   - Name: suggest "`Repo Name - githubclip`" (user can customize)
    - Link project to target repository (or leave unlinked — auto-link on first issue add)
 
 4. **Resolve project ID:**
@@ -118,7 +118,7 @@ Create or repair the two mandatory fields:
 
 ### Step 5: Create or Verify GitHub Labels
 
-Create WoterClip label group and child labels in the target repository:
+Create githubclip label group and child labels in the target repository:
 
 1. Use GitHub MCP to create labels (or verify existing):
    - `agent-working` — state label for active work (color: `pending` or custom)
@@ -137,7 +137,7 @@ Create WoterClip label group and child labels in the target repository:
 
 1. Create the directory structure:
    ```
-   .woterclip/
+   .githubclip/
    ├── config.yaml
    └── personas/
        ├── orchestrator/
@@ -164,7 +164,7 @@ Create WoterClip label group and child labels in the target repository:
      - `{{OWNER}}` → repository owner
      - `{{REPO}}` → repository name
      - `{{USER_NAME}}` → current GitHub login
-   - Write to `.woterclip/`
+   - Write to `.githubclip/`
 
 3. Populate GitHub-specific config sections:
    - `github.owner`, `github.repo`, `github.user_name`
@@ -178,14 +178,14 @@ Create WoterClip label group and child labels in the target repository:
 ### Step 7: Validate Configuration
 
 1. Perform preflight checks:
-   - Can read `.woterclip/config.yaml` and parse valid YAML
+   - Can read `.githubclip/config.yaml` and parse valid YAML
    - All required GitHub fields are resolvable
    - Project field IDs and option IDs are valid (not null)
    - All persona directories exist with required files
    - All required GitHub labels exist
 
 2. Run **mutation smoke test** (anti-fragile):
-   - Create a temporary test comment on the repository (e.g., "WoterClip init test #XYZ")
+   - Create a temporary test comment on the repository (e.g., "githubclip init test #XYZ")
    - Attempt low-risk field update on a non-critical issue (if available)
    - If mutation succeeds: log "✓ Field mutations working"
    - If mutation fails: log error and prompt user for remediation
@@ -204,7 +204,7 @@ Ask the user if they want to set up a recurring heartbeat:
 Display what was created or modified:
 
 ```
-✓ WoterClip initialized!
+✓ githubclip initialized!
 
 GitHub context:
   Owner: myorg
@@ -225,7 +225,7 @@ GitHub labels created:
   ✓ frontend
   ✓ ceo
 
-Config: .woterclip/config.yaml
+Config: .githubclip/config.yaml
 Personas:
   ✓ orchestrator → default (no label)
   ✓ ceo          → "ceo" label
@@ -233,7 +233,7 @@ Personas:
   ✓ frontend     → "frontend" label
 
 Next steps:
-  1. Review .woterclip/config.yaml (project ID, field IDs are set)
+  1. Review .githubclip/config.yaml (project ID, field IDs are set)
   2. Customize persona SOUL.md files for your project
   3. Run: /heartbeat --dry-run (to validate setup)
   4. Run: /heartbeat (to pick up and start work)
@@ -244,7 +244,7 @@ Next steps:
 
 ## Re-initialization (Update)
 
-If `.woterclip/config.yaml` already exists:
+If `.githubclip/config.yaml` already exists:
 
 1. Read existing config version
 2. Ask the user: **overwrite** (fresh start), **merge** (add missing personas/update fields), or **cancel**
@@ -258,7 +258,7 @@ If `.woterclip/config.yaml` already exists:
 
 ### Overwrite behavior:
 - Back up existing config to `config.yaml.bak`
-- Back up persona directories to `.woterclip-backup/`
+- Back up persona directories to `.githubclip-backup/`
 - Rebuild from scratch
 - User must manually restore any customizations
 
@@ -271,7 +271,7 @@ If `.woterclip/config.yaml` already exists:
 | Project not found | Stop. Ask user to provide valid project number or create new project. |
 | Field mutation fails | Log error, suggest re-running init or checking GitHub account permissions. Circuit breaker: disable field writes if repeated failures. |
 | Label creation fails | Log each failure, continue with remaining labels, report summary. |
-| `.woterclip/` already exists | Ask user: overwrite, merge, or cancel. Default to merge. |
+| `.githubclip/` already exists | Ask user: overwrite, merge, or cancel. Default to merge. |
 | YAML parse fails | Log parse error, ask user to review config manually or contact support. |
 
 ## Anti-Fragile Initialization

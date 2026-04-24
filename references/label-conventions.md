@@ -1,10 +1,10 @@
 # Label Conventions
 
-WoterClip uses GitHub repository labels for persona routing and agent state tracking. Labels are provider-agnostic but documented here for GitHub usage.
+githubclip uses GitHub repository labels for persona routing and agent state tracking. Labels are provider-agnostic but documented here for GitHub usage.
 
 ## Label Organization
 
-All WoterClip labels are created in the target repository (configurable prefix default: `WoterClip`). Labels are organized by purpose: system state and persona routing.
+All githubclip labels are created in the target repository (configurable prefix default: `githubclip`). Labels are organized by purpose: system state and persona routing.
 
 ## System State Labels
 
@@ -25,7 +25,7 @@ Labels that track agent work state:
 
 ## Persona Labels
 
-Persona labels route work to the appropriate persona. Created by `/woterclip-init` and registered in `config.yaml`.
+Persona labels route work to the appropriate persona. Created by `/githubclip-init` and registered in `config.yaml`.
 
 | Label | Persona | Role | Typical Signals |
 |---|---|---|---|
@@ -74,9 +74,9 @@ set_issue_labels(issue_id, labels)  // writes full set
 ```
 
 This pattern is safe because:
-- WoterClip runs as a **single heartbeat instance per repo** (local lockfile prevents concurrent writers)
+- githubclip runs as a **single heartbeat instance per repo** (local lockfile prevents concurrent writers)
 - Label write is atomic (replaces entire label set)
-- No other agents modify WoterClip labels concurrently
+- No other agents modify githubclip labels concurrently
 
 ## Label Query Patterns
 

@@ -25,4 +25,4 @@
 
 ## Not Used
 
-The Orchestrator does not use repo tools (file read/write, git, bash, etc.). It only reads the WoterClip config to understand available personas.
+The Orchestrator does not use repo tools (file read/write, git, bash, etc.). It only reads the githubclip config to understand available personas.

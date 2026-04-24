@@ -10,7 +10,7 @@ gh auth status                        # must show authenticated
 git remote -v | grep github           # must be in a GitHub repo
 ```
 
-Create a dedicated test project in GitHub UI: **Projects → New Project → Table → "WoterClip Test"**
+Create a dedicated test project in GitHub UI: **Projects → New Project → Table → "githubclip Test"**
 
 ---
 
@@ -33,13 +33,13 @@ Create 5 test issues, all assigned to yourself:
 ### Initialize
 
 ```bash
-/woterclip-init
+/githubclip-init
 # Confirm repo: owner/repo
-# Select project: "WoterClip Test"
+# Select project: "githubclip Test"
 # Choose preset: engineering
 ```
 
-Verify `.woterclip/config.yaml` created with non-null `field_id` values and labels created in repo.
+Verify `.githubclip/config.yaml` created with non-null `field_id` values and labels created in repo.
 
 ### Run
 
@@ -71,7 +71,7 @@ Verify `.woterclip/config.yaml` created with non-null `field_id` values and labe
 |---|---|---|
 | No issues in queue | Assigned to you? In Project? Status = Todo/In Progress? | Assign, add to Project, set Status |
 | Wrong ranking | Project field values set correctly? | Update via Project UI |
-| Persona not detected | Label exactly matches config key? | `cat .woterclip/config.yaml \| grep personas -A 20` |
+| Persona not detected | Label exactly matches config key? | `cat .githubclip/config.yaml \| grep personas -A 20` |
 
 ---
 
@@ -91,7 +91,7 @@ Pick the top-priority test issue (no existing comments). Run:
 
 - [ ] Comment posted with header `## Heartbeat #1 — YYYY-MM-DD HH:MM UTC (Xm Ys)`
 - [ ] Comment has Status, What was done, Next steps, Blockers sections
-- [ ] Footer: `*WoterClip · persona-name · [#N](...)*`
+- [ ] Footer: `*githubclip · persona-name · [#N](...)*`
 - [ ] `agent-working` label applied to issue
 - [ ] Issue remains open
 
@@ -113,7 +113,7 @@ Run heartbeat again on the same issue:
 |---|---|---|
 | No comment posted | Dry-run works? Persona TOOLS.md has GitHub tools? | Check persona config |
 | Counter wrong | View all comments: `gh issue view N --comments` | Counter resets cleanly on next run |
-| Label not applied | Label exists? `gh label list \| grep agent-working` | Re-run `/woterclip-init` |
+| Label not applied | Label exists? `gh label list \| grep agent-working` | Re-run `/githubclip-init` |
 
 ---
 
@@ -177,7 +177,7 @@ Create two issues with identical Status and Priority but different `updated_at`.
 
 | Problem | Check | Fix |
 |---|---|---|
-| Status not updating | `field_id` null in config? | Re-run `/woterclip-init` (merge mode) |
+| Status not updating | `field_id` null in config? | Re-run `/githubclip-init` (merge mode) |
 | Permission error | Project role = Admin or Editor? | Check Project → Settings |
 
 ---
@@ -189,15 +189,15 @@ Create two issues with identical Status and Priority but different `updated_at`.
 ### Setup
 
 ```bash
-cp .woterclip/config.yaml .woterclip/config.yaml.working
+cp .githubclip/config.yaml .githubclip/config.yaml.working
 ```
 
 ### 4.1 Progressive Degradation
 
 ```bash
-sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .woterclip/config.yaml
+sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .githubclip/config.yaml
 /heartbeat
-cp .woterclip/config.yaml.working .woterclip/config.yaml
+cp .githubclip/config.yaml.working .githubclip/config.yaml
 ```
 
 - [ ] Heartbeat completes without crash
@@ -208,11 +208,11 @@ cp .woterclip/config.yaml.working .woterclip/config.yaml
 ### 4.2 Circuit Breaker
 
 ```bash
-sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .woterclip/config.yaml
+sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .githubclip/config.yaml
 /heartbeat
 /heartbeat
 /heartbeat
-cp .woterclip/config.yaml.working .woterclip/config.yaml
+cp .githubclip/config.yaml.working .githubclip/config.yaml
 /heartbeat   # should succeed and reset circuit breaker
 ```
 
@@ -223,19 +223,19 @@ cp .woterclip/config.yaml.working .woterclip/config.yaml
 ### 4.3 Recovery Journal
 
 ```bash
-tail -10 .woterclip/heartbeat-log.jsonl | jq '.'
+tail -10 .githubclip/heartbeat-log.jsonl | jq '.'
 ```
 
-- [ ] File exists at `.woterclip/heartbeat-log.jsonl`
+- [ ] File exists at `.githubclip/heartbeat-log.jsonl`
 - [ ] Each line is valid JSON with: `timestamp`, `issue`, `heartbeat`, `step`, `status`
 - [ ] Entries cover all heartbeat runs
 
 ### 4.4 Schema Drift Sentry
 
 ```bash
-sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .woterclip/config.yaml
+sed -i '' 's/PVT_FIELD_1/PVT_FIELD_INVALID/g' .githubclip/config.yaml
 /heartbeat
-cp .woterclip/config.yaml.working .woterclip/config.yaml
+cp .githubclip/config.yaml.working .githubclip/config.yaml
 ```
 
 - [ ] Heartbeat detects drift and stops early
@@ -245,11 +245,11 @@ cp .woterclip/config.yaml.working .woterclip/config.yaml
 ### 4.5 Idempotent Re-Init
 
 ```bash
-cp .woterclip/config.yaml .woterclip/config.yaml.pre-reinit
-/woterclip-init   # choose "merge"
-diff .woterclip/config.yaml.pre-reinit .woterclip/config.yaml
-/woterclip-init   # run again
-diff .woterclip/config.yaml.pre-reinit .woterclip/config.yaml
+cp .githubclip/config.yaml .githubclip/config.yaml.pre-reinit
+/githubclip-init   # choose "merge"
+diff .githubclip/config.yaml.pre-reinit .githubclip/config.yaml
+/githubclip-init   # run again
+diff .githubclip/config.yaml.pre-reinit .githubclip/config.yaml
 ```
 
 - [ ] First diff shows no changes
@@ -261,16 +261,16 @@ diff .woterclip/config.yaml.pre-reinit .woterclip/config.yaml
 
 ```bash
 # No stale Linear references
-grep -r "mcp__claude_ai_Linear" .woterclip/ && echo "FOUND (BAD)" || echo "✓ None"
+grep -r "mcp__claude_ai_Linear" .githubclip/ && echo "FOUND (BAD)" || echo "✓ None"
 
 # Config is valid YAML
-python3 -c "import yaml; yaml.safe_load(open('.woterclip/config.yaml'))" && echo "✓ Valid"
+python3 -c "import yaml; yaml.safe_load(open('.githubclip/config.yaml'))" && echo "✓ Valid"
 
 # Required labels exist
 gh label list | grep -E "agent-working|agent-blocked"
 
 # Heartbeat log populated
-wc -l .woterclip/heartbeat-log.jsonl
+wc -l .githubclip/heartbeat-log.jsonl
 ```
 
 All 4 phases passing:
@@ -283,7 +283,7 @@ All 4 phases passing:
 ## Cleanup
 
 ```bash
-rm .woterclip/config.yaml.working .woterclip/config.yaml.pre-reinit
+rm .githubclip/config.yaml.working .githubclip/config.yaml.pre-reinit
 
 # Delete test labels (optional)
 gh label delete agent-working agent-blocked -y --repo owner/repo
@@ -295,5 +295,5 @@ gh label delete agent-working agent-blocked -y --repo owner/repo
 
 1. Delete test issues and project
 2. Run `/heartbeat` on real production issues
-3. Monitor `.woterclip/heartbeat-log.jsonl` for errors
+3. Monitor `.githubclip/heartbeat-log.jsonl` for errors
 4. Adjust persona `SOUL.md` files for your team's workflows

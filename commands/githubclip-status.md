@@ -1,9 +1,9 @@
 ---
-description: Show WoterClip status (queue, blocked issues, last heartbeat)
+description: Show githubclip status (queue, blocked issues, last heartbeat)
 argument-hint: [--history]
 ---
 
-Show the current WoterClip status using the woterclip-status skill.
+Show the current githubclip status using the githubclip-status skill.
 
 Arguments passed: $ARGUMENTS
 

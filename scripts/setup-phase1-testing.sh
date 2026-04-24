@@ -1,10 +1,10 @@
 #!/bin/bash
-# WoterClip GitHub MCP Testing - Quick Start Script
+# githubclip GitHub MCP Testing - Quick Start Script
 # Run this in your GitHub repository to set up Phase 1 testing
 
 set -e
 
-echo "🚀 WoterClip GitHub MCP - Quick Start Testing"
+echo "🚀 githubclip GitHub MCP - Quick Start Testing"
 echo "================================================"
 echo ""
 
@@ -40,13 +40,13 @@ fi
 echo "Step 1: Create test GitHub Project"
 echo "===================================="
 echo ""
-echo "Creating test project 'WoterClip Test'..."
+echo "Creating test project 'githubclip Test'..."
 echo ""
 echo "Note: GitHub CLI doesn't support project creation yet."
 echo "Please create manually:"
 echo "  1. Go to: https://github.com/$OWNER/$REPO_NAME/projects"
 echo "  2. Click 'New project'"
-echo "  3. Name: 'WoterClip Test'"
+echo "  3. Name: 'githubclip Test'"
 echo "  4. Template: 'Table'"
 echo "  5. Create project"
 echo ""
@@ -162,18 +162,18 @@ echo "If missing, add them in Project Settings."
 read -p "Press Enter once you've verified the fields..."
 
 echo ""
-echo "Step 5: Initialize WoterClip"
+echo "Step 5: Initialize githubclip"
 echo "============================"
 echo ""
 echo "Now run in your Claude Code IDE:"
-echo "  /woterclip-init"
+echo "  /githubclip-init"
 echo ""
 echo "When prompted:"
 echo "  • Repo: $OWNER/$REPO_NAME"
-echo "  • Project: Use 'WoterClip Test' (number: $PROJECT_NUM)"
+echo "  • Project: Use 'githubclip Test' (number: $PROJECT_NUM)"
 echo "  • Persona: Choose 'engineering'"
 echo ""
-read -p "Press Enter once you've run /woterclip-init..."
+read -p "Press Enter once you've run /githubclip-init..."
 
 echo ""
 echo "Step 6: Run dry-run test"

@@ -6,7 +6,7 @@
 
 ## Overview
 
-WoterClip supports **GitHub Projects (v2)** as primary work queue, with backward compatibility for Linear. This spec covers the migration path, configuration differences, and operational procedures for teams switching providers.
+githubclip supports **GitHub Projects (v2)** as primary work queue, with backward compatibility for Linear. This spec covers the migration path, configuration differences, and operational procedures for teams switching providers.
 
 ## Why Migrate to GitHub
 
@@ -26,12 +26,12 @@ WoterClip supports **GitHub Projects (v2)** as primary work queue, with backward
 
 ## Migration Steps
 
-### Step 1 — Initialize WoterClip for GitHub
+### Step 1 — Initialize githubclip for GitHub
 
 Run in the target GitHub repository:
 
 ```bash
-/woterclip-init
+/githubclip-init
 ```
 
 Follow prompts:
@@ -40,7 +40,7 @@ Follow prompts:
 3. Choose persona preset (e.g. `engineering`)
 4. Review and confirm summary
 
-**Result:** `.woterclip/config.yaml` with GitHub configuration, Project fields created, labels created.
+**Result:** `.githubclip/config.yaml` with GitHub configuration, Project fields created, labels created.
 
 ### Step 2 — Port Existing Work (If Needed)
 
@@ -96,7 +96,7 @@ provider: linear
 linear:
   user_name: "Team Member"
   team: "Engineering"
-  project: "WoterClip"
+  project: "githubclip"
 ```
 
 ### GitHub (current)
@@ -149,7 +149,7 @@ github:
 
 Check: field IDs correctly resolved in config; option IDs present; GitHub MCP has project mutation permission.
 
-Fix: run `/woterclip-init` in merge mode to refresh field IDs; verify IDs match actual project schema.
+Fix: run `/githubclip-init` in merge mode to refresh field IDs; verify IDs match actual project schema.
 
 ### Issues not appearing in queue
 
@@ -171,7 +171,7 @@ The heartbeat counter is informational only — not functional. It recomputes fr
 
 To revert during transition:
 
-1. Update `.woterclip/config.yaml`:
+1. Update `.githubclip/config.yaml`:
    ```yaml
    provider: linear
    compat:
@@ -189,13 +189,13 @@ Work completed during GitHub phase remains as GitHub issues; future work queues 
 2. Use deterministic IDs — never rely on field/option display names; init resolves IDs upfront
 3. Monitor degradation mode — repeated circuit breaker triggers indicate permission or API issues
 4. Re-run init after any Project field rename to refresh IDs
-5. Back up `.woterclip/config.yaml` before major changes
+5. Back up `.githubclip/config.yaml` before major changes
 6. Test on non-critical work first; validate heartbeat on triage/low-impact issues before high-stakes work
 
 ## FAQ
 
 **Can I use both Linear and GitHub simultaneously?**
-No. Only one provider can be active in `.woterclip/config.yaml` at a time. Switch via config and re-run heartbeat.
+No. Only one provider can be active in `.githubclip/config.yaml` at a time. Switch via config and re-run heartbeat.
 
 **What happens to Linear issues after migration?**
 They remain in Linear. Export/archive them or keep as read-only history.
@@ -204,10 +204,10 @@ They remain in Linear. Export/archive them or keep as read-only history.
 Only for issues you want in the active queue. Historical Linear issues can stay in Linear.
 
 **What if a GitHub Project field gets renamed?**
-Run `/woterclip-init` (merge mode) to auto-repair field IDs.
+Run `/githubclip-init` (merge mode) to auto-repair field IDs.
 
-**Can I use WoterClip without a GitHub Project?**
+**Can I use githubclip without a GitHub Project?**
 No. GitHub MCP mode requires a Project v2 with Status and Priority fields for queue ranking.
 
 **How do I report bugs with GitHub MCP?**
-Check `references/verification-checklist.md` for troubleshooting steps, or file an issue on the WoterClip repo.
+Check `references/verification-checklist.md` for troubleshooting steps, or file an issue on the githubclip repo.

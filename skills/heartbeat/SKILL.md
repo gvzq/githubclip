@@ -1,12 +1,12 @@
 ---
 name: heartbeat
-description: This skill should be used when the user asks to "run a heartbeat", "run the agent loop", "process GitHub issues", "check for work", or runs the /heartbeat command. Executes the WoterClip heartbeat — picks up GitHub Project issues, resolves personas, does work, and reports back with structured comments.
+description: This skill should be used when the user asks to "run a heartbeat", "run the agent loop", "process GitHub issues", "check for work", or runs the /heartbeat command. Executes the githubclip heartbeat — picks up GitHub Project issues, resolves personas, does work, and reports back with structured comments.
 version: 1.0.0
 ---
 
-# WoterClip Heartbeat (GitHub)
+# githubclip Heartbeat (GitHub)
 
-Execute the WoterClip heartbeat cycle: pick up assigned GitHub Project issues, resolve the right persona, do the work, and report back with structured comments.
+Execute the githubclip heartbeat cycle: pick up assigned GitHub Project issues, resolve the right persona, do the work, and report back with structured comments.
 
 **Arguments:**
 - `--dry-run` — Show what would be picked up without doing work
@@ -20,13 +20,13 @@ Execute the WoterClip heartbeat cycle: pick up assigned GitHub Project issues, r
 
 ## Step 1: Load Config & Validate Setup
 
-1. Read `.woterclip/config.yaml`. If missing, stop and instruct the user to run `/woterclip-init`.
+1. Read `.githubclip/config.yaml`. If missing, stop and instruct the user to run `/githubclip-init`.
 2. Validate provider is `github`: if not, stop with error message about provider mismatch.
 3. Validate all required fields are present and resolved:
    - `github.project.project_id` (GraphQL ID)
    - `github.fields.status.field_id` and all option IDs
    - `github.fields.priority.field_id` and all option IDs
-4. Check for lockfile at `.woterclip/.heartbeat-lock`:
+4. Check for lockfile at `.githubclip/.heartbeat-lock`:
    - If exists and is **less than** `stale_lock_hours` old → stop: "Previous heartbeat still active. Skipping."
    - If exists and is **older than** `stale_lock_hours` → delete it, log: "Cleaned stale lockfile."
    - If no lockfile → proceed.
@@ -87,7 +87,7 @@ Implement schema drift sentry: compute checksum of field IDs and option IDs from
 
 1. Read issue labels. Find persona label by matching against `config.yaml` → `personas[*].label`.
 2. If no persona label found → load persona with `is_default: true` (typically Orchestrator).
-3. Load persona files from `.woterclip/<persona.path>/`:
+3. Load persona files from `.githubclip/<persona.path>/`:
    - `SOUL.md` → inject as identity instructions
    - `TOOLS.md` → inject as tool guidance
    - `config.yaml` → read runtime settings
@@ -126,7 +126,7 @@ Read `required_tools` from persona config. For each entry, verify the tool prefi
 2. If issue references a parent issue, fetch parent for broader context
 3. Identify new comments since last heartbeat: look for comments after last `Heartbeat #N` comment
 4. Parse heartbeat counter: find last comment matching `Heartbeat #N` pattern. Next will be `#N+1`. If none found, start at `#1`.
-5. Append action record to `.woterclip/heartbeat-log.jsonl`:
+5. Append action record to `.githubclip/heartbeat-log.jsonl`:
    ```json
    {"timestamp": "ISO", "issue": "#123", "heartbeat": N, "step": "understand", "status": "ok"}
    ```
@@ -161,7 +161,7 @@ Follow the comment format from `${CLAUDE_PLUGIN_ROOT}/references/comment-format.
 - List commits with SHAs, related issues created, and next steps
 - For blocked status: name who needs to act (Board user from config `github.user_name`)
 
-Append heartbeat metadata to `.woterclip/heartbeat-log.jsonl`:
+Append heartbeat metadata to `.githubclip/heartbeat-log.jsonl`:
 ```json
 {"heartbeat": N, "timestamp": "ISO", "issue": "#123", "persona": "name", "duration_sec": N, "status": "completed|blocked|more_work|triaged", "actions": ["description"], "step": "report"}
 ```
@@ -207,5 +207,5 @@ Apply outcome-specific transitions via Project field mutations and label updates
 
 **Anti-fragile exit behaviors:**
 - If circuit-breaker was triggered: post summary comment marking run as degraded
-- If recovery journal is enabled: recovery information is in `.woterclip/heartbeat-log.jsonl` for crash resume
+- If recovery journal is enabled: recovery information is in `.githubclip/heartbeat-log.jsonl` for crash resume
 - If reconciliation pass enabled: optionally run cleanup (remove orphaned `agent-working` labels, re-sync inconsistent statuses)

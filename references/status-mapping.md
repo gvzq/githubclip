@@ -1,12 +1,12 @@
 # Status Mapping
 
-Maps between provider-specific workflow states and WoterClip agent states, with GitHub as the primary provider.
+Maps between provider-specific workflow states and githubclip agent states, with GitHub as the primary provider.
 
-## GitHub Project States → WoterClip Behavior
+## GitHub Project States → githubclip Behavior
 
 ### Status Field
 
-| Project Status | WoterClip Behavior | In Queue |
+| Project Status | githubclip Behavior | In Queue |
 |---|---|---|
 | **Todo** | Inbox eligible for pickup (lower priority than In Progress) | ✓ |
 | **In Progress** | Inbox priority pickup (agent or human started work) | ✓ |
@@ -24,7 +24,7 @@ Maps between provider-specific workflow states and WoterClip agent states, with 
 | **Low** | 4 | Nice-to-have, can defer |
 | **None** | 5 | Unspecified or default |
 
-## WoterClip Outcomes → GitHub State Changes
+## githubclip Outcomes → GitHub State Changes
 
 | Heartbeat Outcome | Project Status | Labels | Issue Close |
 |---|---|---|---|
@@ -88,7 +88,7 @@ Maps between provider-specific workflow states and WoterClip agent states, with 
 - **Completed:** Remove `agent-working`
 - **Blocked:** Remove `agent-working`, add `agent-blocked`
 - **More work:** Keep `agent-working`
-- Always delete local `.woterclip/.heartbeat-lock` file
+- Always delete local `.githubclip/.heartbeat-lock` file
 
 ## Identity Resolution
 

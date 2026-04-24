@@ -1,12 +1,12 @@
 ---
-name: woterclip-status
-description: This skill should be used when the user asks to "check woterclip status", "show agent status", "what is woterclip doing", "show heartbeat status", "what's in the queue", or runs the /woterclip-status command. Shows current WoterClip state, issue queue, and blocked items.
+name: githubclip-status
+description: This skill should be used when the user asks to "check githubclip status", "show agent status", "what is githubclip doing", "show heartbeat status", "what's in the queue", or runs the /githubclip-status command. Shows current githubclip state, issue queue, and blocked items.
 version: 0.1.0
 ---
 
-# WoterClip Status
+# githubclip Status
 
-Display the current state of WoterClip in this repository: schedule info, last heartbeat, issue activity, queue, and blocked items.
+Display the current state of githubclip in this repository: schedule info, last heartbeat, issue activity, queue, and blocked items.
 
 **Arguments:**
 - `--history` — Show recent heartbeat history from the log file
@@ -15,7 +15,7 @@ Display the current state of WoterClip in this repository: schedule info, last h
 
 ### Step 1: Load Config
 
-Read `.woterclip/config.yaml`. If missing, report that WoterClip is not initialized and suggest `/woterclip-init`.
+Read `.githubclip/config.yaml`. If missing, report that githubclip is not initialized and suggest `/githubclip-init`.
 
 ### Step 2: Check Schedule
 
@@ -23,7 +23,7 @@ Report whether a recurring heartbeat is active. Check if `/schedule` is running 
 
 ### Step 3: Last Heartbeat
 
-Read the last line of `.woterclip/heartbeat-log.jsonl` (if it exists). Report:
+Read the last line of `.githubclip/heartbeat-log.jsonl` (if it exists). Report:
 - Heartbeat number, timestamp, and how long ago it ran
 - Which persona and issue were involved
 - Outcome (completed, in progress, blocked)
@@ -51,7 +51,7 @@ Call `mcp__claude_ai_Linear__list_issues` with `assignee: "me"`. Filter and cate
 ### Step 5: Format Output
 
 ```
-WoterClip Status
+githubclip Status
 ────────────────
 Last beat:    Heartbeat #N — X min ago
 
@@ -69,7 +69,7 @@ Blocked (needs Board):
 
 ## History Mode
 
-When `--history` is passed, read `.woterclip/heartbeat-log.jsonl` and display the last 10 entries:
+When `--history` is passed, read `.githubclip/heartbeat-log.jsonl` and display the last 10 entries:
 
 ```
 Heartbeat History (last 10)

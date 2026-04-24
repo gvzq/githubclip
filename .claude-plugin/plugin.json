@@ -7,5 +7,5 @@
   },
   "repository": "https://github.com/gvzq/githubclip",
   "license": "MIT",
-  "keywords": ["github", "woterclip", "agent", "orchestration", "persona", "heartbeat"]
+  "keywords": ["github", "githubclip", "agent", "orchestration", "persona", "heartbeat"]
 }

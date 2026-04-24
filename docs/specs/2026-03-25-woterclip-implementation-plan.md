@@ -1,8 +1,8 @@
-# WoterClip Implementation Plan
+# githubclip Implementation Plan
 
 **Date:** 2026-03-25
-**Spec:** `docs/specs/2026-03-25-woterclip-design.md`
-**Linear:** [WOT-79](https://linear.app/wotai/issue/WOT-79/design-woterclip-agent-orchestration-system)
+**Spec:** `docs/specs/2026-03-25-githubclip-design.md`
+**Linear:** [WOT-79](https://linear.app/wotai/issue/WOT-79/design-githubclip-agent-orchestration-system)
 
 ## Build Order
 
@@ -22,7 +22,7 @@ Implementation follows a dependency chain: plugin scaffold → config → person
 
 ### Phase 2: Templates & Config
 
-**Goal:** Per-repo config and persona templates ready for `/woterclip-init`.
+**Goal:** Per-repo config and persona templates ready for `/githubclip-init`.
 
 | Task | Files | Description |
 |------|-------|-------------|
@@ -43,18 +43,18 @@ Implementation follows a dependency chain: plugin scaffold → config → person
 |------|-------|-------------|
 | 3.1 | `references/comment-format.md` | Standard + blocked comment templates |
 | 3.2 | `references/label-conventions.md` | Label names, group structure, heuristics table |
-| 3.3 | `references/status-mapping.md` | Linear states ↔ WoterClip states mapping |
+| 3.3 | `references/status-mapping.md` | Linear states ↔ githubclip states mapping |
 
 ### Phase 4: Init Skill & Command
 
-**Goal:** `/woterclip-init` scaffolds a repo with config + personas + Linear labels.
+**Goal:** `/githubclip-init` scaffolds a repo with config + personas + Linear labels.
 
 | Task | Files | Description |
 |------|-------|-------------|
 | 4.1 | `skills/init/SKILL.md` | Init skill: check Linear MCP, fetch user/team, scaffold config, create labels |
-| 4.2 | `commands/woterclip-init.md` | Command wrapper for init skill |
+| 4.2 | `commands/githubclip-init.md` | Command wrapper for init skill |
 
-**Verify:** Run `/woterclip-init` in pk-2026 repo, confirm config and personas created, labels exist in Linear.
+**Verify:** Run `/githubclip-init` in pk-2026 repo, confirm config and personas created, labels exist in Linear.
 
 ### Phase 5: Heartbeat Skill & Command (Core)
 
@@ -82,17 +82,17 @@ This is the largest skill. Break the SKILL.md into clear sections matching spec 
 
 ### Phase 6: Status & Utility Skills
 
-**Goal:** `/woterclip-status`, `/persona-create`, `/persona-list`.
+**Goal:** `/githubclip-status`, `/persona-create`, `/persona-list`.
 
 | Task | Files | Description |
 |------|-------|-------------|
 | 6.1 | `skills/status/SKILL.md` | Status skill: current state, since-last-beat diff, queue, blocked list |
-| 6.2 | `commands/woterclip-status.md` | Command wrapper with `--history` flag |
+| 6.2 | `commands/githubclip-status.md` | Command wrapper with `--history` flag |
 | 6.3 | `skills/persona-create/SKILL.md` | Interactive persona creation (name, role, label, SOUL template) |
 | 6.4 | `skills/persona-list/SKILL.md` | List configured personas with runtime config |
 | 6.5 | `skills/heartbeat-log/SKILL.md` | Parse heartbeat-log.jsonl for summaries |
 
-**Verify:** `/woterclip-status` shows accurate state after running heartbeat.
+**Verify:** `/githubclip-status` shows accurate state after running heartbeat.
 
 ### Phase 7: CEO Agent & Triage
 
@@ -110,7 +110,7 @@ This is the largest skill. Break the SKILL.md into clear sections matching spec 
 
 | Task | Files | Description |
 |------|-------|-------------|
-| 8.1 | `skills/persona-import/SKILL.md` | Convert Paperclip agent dirs to WoterClip personas |
+| 8.1 | `skills/persona-import/SKILL.md` | Convert Paperclip agent dirs to githubclip personas |
 | 8.2 | `hooks/hooks.json` | Optional hooks (if needed for auto-injection) |
 | 8.3 | Polish | README updates, edge case handling, error messages |
 
@@ -122,16 +122,16 @@ This is the largest skill. Break the SKILL.md into clear sections matching spec 
 |-------|------------|
 | 1 | Plugin installs without errors |
 | 2-3 | Templates valid, YAML parses, markdown renders |
-| 4 | `/woterclip-init` in woterclip → config + labels created |
+| 4 | `/githubclip-init` in githubclip → config + labels created |
 | 5 | `/heartbeat --dry-run` → correct issue picked. Manual `/heartbeat` → comment posted |
-| 6 | `/woterclip-status` → accurate output |
+| 6 | `/githubclip-status` → accurate output |
 | 7 | Create unlabeled issue → CEO triages it |
 | 8 | Import Paperclip CTO → valid persona files |
 
 ## Implementation Notes
 
-- Build in the `woterclip` repo at `/Users/alexkim/Documents/Github-Mac-2026/woterclip/`
-- Test against the WotAI Linear workspace (team: WotAI, project: WoterClip)
-- Use woterclip as the first target repo for `/woterclip-init`
+- Build in the `githubclip` repo at `/Users/alexkim/Documents/Github-Mac-2026/githubclip/`
+- Test against the WotAI Linear workspace (team: WotAI, project: githubclip)
+- Use githubclip as the first target repo for `/githubclip-init`
 - Reference real Paperclip agents at `/Users/alexkim/Documents/Paperclip/agents/` and `/Users/alexkim/Documents/Paperclip-PK/agents/` for persona templates
 - Use `plugin-dev` skills (`plugin-structure`, `skill-development`, `command-development`) during implementation; also wotai-testing

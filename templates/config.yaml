@@ -1,5 +1,5 @@
-# WoterClip Configuration
-# Created by /woterclip-init – customize for your repo
+# githubclip Configuration
+# Created by /githubclip-init – customize for your repo
 version: 2
 
 # Provider selection: github or linear
@@ -64,7 +64,7 @@ heartbeat:
 
 # Label configuration (GitHub labels)
 labels:
-  group: "WoterClip"                    # Label group prefix (auto-created by init)
+  group: "githubclip"                    # Label group prefix (auto-created by init)
   working: "agent-working"              # Applied while agent is working an issue
   blocked: "agent-blocked"              # Applied when agent is blocked
 

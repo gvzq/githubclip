@@ -1,6 +1,6 @@
 # GitHub Status Mapping
 
-Maps between GitHub Project custom fields and WoterClip agent states for 1:1 parity with Linear.
+Maps between GitHub Project custom fields and githubclip agent states for 1:1 parity with Linear.
 
 ## Provider Context
 
@@ -8,11 +8,11 @@ Maps between GitHub Project custom fields and WoterClip agent states for 1:1 par
 - **State Storage:** Project custom fields + Issue labels
 - **Repo Scope:** Single target repository (`owner/repo`)
 
-## GitHub Project → WoterClip Behavior
+## GitHub Project → githubclip Behavior
 
 ### Status Field Values
 
-| Project Status | WoterClip Behavior | Included in Queue |
+| Project Status | githubclip Behavior | Included in Queue |
 |---|---|---|
 | **Todo** | In the inbox, eligible for pickup (lower priority than In Progress) | ✓ Yes |
 | **In Progress** | In the inbox, priority pickup (agent or human started work) | ✓ Yes |
@@ -30,7 +30,7 @@ Maps between GitHub Project custom fields and WoterClip agent states for 1:1 par
 | **Low** | 4 | Nice-to-have |
 | **None** | 5 | Unspecified |
 
-## WoterClip Outcomes → GitHub State Changes
+## githubclip Outcomes → GitHub State Changes
 
 | Heartbeat Outcome | Project Status | Labels | Issue Close |
 |---|---|---|---|
@@ -79,7 +79,7 @@ Maps between GitHub Project custom fields and WoterClip agent states for 1:1 par
 
 ### Distributed Lock Safety
 
-- **Local lock:** `.woterclip/.heartbeat-lock` file (same as Linear heartbeat)
+- **Local lock:** `.githubclip/.heartbeat-lock` file (same as Linear heartbeat)
 - **Issue lock:** `agent-working` label + timestamp verification from latest heartbeat comment
 - **Dual-prevention:** On lock acquisition, check if another heartbeat is active via:
   - `agent-working` label exists

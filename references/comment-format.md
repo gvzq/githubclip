@@ -20,7 +20,7 @@ All heartbeat comments follow a structured template posted via GitHub issue comm
 None
 
 ---
-*WoterClip · persona-name · [#123](https://github.com/OWNER/REPO/issues/123) · from [Heartbeat #N-1](link)*
+*githubclip · persona-name · [#123](https://github.com/OWNER/REPO/issues/123) · from [Heartbeat #N-1](link)*
 ```
 
 ## Blocked Template
@@ -40,7 +40,7 @@ Clear description of what is blocking progress.
 - Work completed before hitting the blocker
 
 ---
-*WoterClip · persona-name · [#123](https://github.com/OWNER/REPO/issues/123)*
+*githubclip · persona-name · [#123](https://github.com/OWNER/REPO/issues/123)*
 ```
 
 ## Triage Template (Orchestrator)
@@ -60,7 +60,7 @@ Reasoning for routing choice
 Awaiting backend persona to pick up
 
 ---
-*WoterClip · orchestrator · [#123](https://github.com/OWNER/REPO/issues/123)*
+*githubclip · orchestrator · [#123](https://github.com/OWNER/REPO/issues/123)*
 ```
 
 ## Rules
@@ -78,7 +78,7 @@ Awaiting backend persona to pick up
 
 The counter is **derived from GitHub issue comments**, not stored locally:
 
-1. Parse the last WoterClip heartbeat comment on the issue for `Heartbeat #N` pattern
+1. Parse the last githubclip heartbeat comment on the issue for `Heartbeat #N` pattern
 2. Increment N for the new comment
 3. If no previous comment exists, start at `#1`
 4. If comments are deleted/edited, recompute from remaining valid bot-authored comments only
@@ -87,7 +87,7 @@ The counter is **derived from GitHub issue comments**, not stored locally:
 
 The footer line connects the comment to its operational context:
 
-- `WoterClip` — identifies this as an agent heartbeat comment
+- `githubclip` — identifies this as an agent heartbeat comment
 - `persona-name` — which persona produced this work (matches `config.yaml` → `personas[*].label` or name)
 - `[#123](...)` — GitHub issue number with link
 - `from [Heartbeat #N-1](...)` — link to previous heartbeat comment (omit on first heartbeat, omit if no prior heartbeats)

@@ -1,13 +1,13 @@
 # GitHub Integration — Usage Guide
 
-Operational reference for running WoterClip with the GitHub MCP provider.
+Operational reference for running githubclip with the GitHub MCP provider.
 
 ## Prerequisites
 
 ```bash
 gh auth status                    # must show authenticated
-ls .woterclip/config.yaml         # must exist (run /woterclip-init if not)
-cat .woterclip/config.yaml | head -3  # provider: github
+ls .githubclip/config.yaml         # must exist (run /githubclip-init if not)
+cat .githubclip/config.yaml | head -3  # provider: github
 ```
 
 ## Running the Heartbeat
@@ -21,7 +21,7 @@ Dry-run is safe to run at any time. It reads the queue and prints what would be 
 
 ## How the Queue Works
 
-WoterClip fetches all GitHub Project items assigned to the configured `user_name` and filters to:
+githubclip fetches all GitHub Project items assigned to the configured `user_name` and filters to:
 - Status: `Todo` or `In Progress` only
 - No `agent-blocked` label (unless new human comments have been posted since blocking)
 
@@ -72,7 +72,7 @@ Every heartbeat posts a comment on the issue:
 None
 
 ---
-*WoterClip · persona-name · [#N](...) · from [Heartbeat #N-1](...)*
+*githubclip · persona-name · [#N](...) · from [Heartbeat #N-1](...)*
 ```
 
 The counter `N` is derived from existing comments on the issue — not stored locally. It increments safely across restarts.
@@ -145,7 +145,7 @@ gh api graphql -f query='
 ### Check heartbeat log
 
 ```bash
-tail -20 .woterclip/heartbeat-log.jsonl | jq '.'
+tail -20 .githubclip/heartbeat-log.jsonl | jq '.'
 ```
 
 Each line is a JSON record: `timestamp`, `issue`, `heartbeat`, `step`, `status`.
@@ -156,16 +156,16 @@ Each line is a JSON record: `timestamp`, `issue`, `heartbeat`, `step`, `status`.
 |---|---|---|
 | No issues in queue | Issues assigned to you? In Project? Status = Todo/In Progress? | Assign issues, add to Project, set Status |
 | Wrong queue order | Project Priority/Status values correct? | Update fields via Project UI |
-| Field mutations not working | `field_id` values null in config? | Re-run `/woterclip-init` (merge mode) |
+| Field mutations not working | `field_id` values null in config? | Re-run `/githubclip-init` (merge mode) |
 | Stuck in read-only | Circuit breaker active? | Fix config, run `/heartbeat` once to reset |
-| Persona not routing | Label exactly matches config key? | Check `cat .woterclip/config.yaml \| grep personas -A 20` |
+| Persona not routing | Label exactly matches config key? | Check `cat .githubclip/config.yaml \| grep personas -A 20` |
 
 ## Refreshing Config
 
 If Project fields are renamed or IDs drift, re-run init in merge mode:
 
 ```bash
-/woterclip-init   # choose "merge" when prompted
+/githubclip-init   # choose "merge" when prompted
 ```
 
 Merge mode only adds missing values — it never deletes existing ones. It is safe to run at any time.
