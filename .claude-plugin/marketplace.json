@@ -1,21 +1,22 @@
 {
   "name": "woterclip",
   "owner": {
-    "name": "Alex Kim",
-    "url": "https://github.com/wotai-dev"
+    "name": "Gerardo Vazquez",
+    "url": "https://github.com/gvzq"
   },
   "plugins": [
     {
-      "name": "woterclip",
+      "name": "github-agent-orchestrator",
       "source": "./",
-      "description": "Linear-backed agent orchestration with persona-based task routing for Claude Code",
-      "version": "0.1.0",
+      "description": "Agent orchestration with persona-based task routing for Claude Code. Supports GitHub Projects (primary) forked from WoterClip.",
+      "version": "2.0.0",
       "author": {
-        "name": "Alex Kim"
+        "name": "Gerardo Vazquez"
       },
       "category": "automation",
       "keywords": [
-        "linear",
+        "github",
+        "woterclip",
         "agent",
         "orchestration",
         "persona",
@@ -23,8 +24,8 @@
         "claude-code",
         "task-routing"
       ],
-      "homepage": "https://github.com/wotai-dev/woterclip",
-      "repository": "https://github.com/wotai-dev/woterclip",
+      "homepage": "https://github.com/gvzq/woterclip",
+      "repository": "https://github.com/gvzq/woterclip",
       "license": "MIT"
     }
   ]

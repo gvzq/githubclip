@@ -1,11 +1,11 @@
 {
   "name": "woterclip",
-  "version": "0.1.0",
-  "description": "Linear-backed agent orchestration with persona-based task routing for Claude Code",
+  "version": "2.0.0",
+  "description": "Provider-agnostic agent orchestration with persona-based task routing for Claude Code. Supports GitHub Projects (primary) and Linear (legacy).",
   "author": {
-    "name": "Alex Kim"
+    "name": "Gerardo Vazquez"
   },
-  "repository": "https://github.com/wotai-dev/woterclip",
+  "repository": "https://github.com/gvzq/woterclip",
   "license": "MIT",
-  "keywords": ["linear", "agent", "orchestration", "persona", "heartbeat"]
+  "keywords": ["github", "woterclip", "agent", "orchestration", "persona", "heartbeat"]
 }
