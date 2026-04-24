@@ -1,3 +1,9 @@
+---
+layout: default
+title: Test Results Template
+permalink: /test-results-summary-template.html
+---
+
 # Test Results Summary Template
 
 **Project:** githubclip GitHub MCP  

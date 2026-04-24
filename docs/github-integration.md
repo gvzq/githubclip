@@ -1,3 +1,9 @@
+---
+layout: default
+title: GitHub Integration
+permalink: /github-integration.html
+---
+
 # GitHub Integration — Usage Guide
 
 Operational reference for running githubclip with the GitHub MCP provider.

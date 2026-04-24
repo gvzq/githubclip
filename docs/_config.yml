@@ -1,0 +1,5 @@
+title: githubclip docs
+description: Jekyll docs site for githubclip
+markdown: kramdown
+kramdown:
+  input: GFM
