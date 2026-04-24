@@ -1,11 +1,11 @@
 {
-  "name": "woterclip",
+  "name": "githubclip",
   "version": "2.0.0",
   "description": "Provider-agnostic agent orchestration with persona-based task routing for Claude Code. Supports GitHub Projects (primary) and Linear (legacy).",
   "author": {
     "name": "Gerardo Vazquez"
   },
-  "repository": "https://github.com/gvzq/woterclip",
+  "repository": "https://github.com/gvzq/githubclip",
   "license": "MIT",
   "keywords": ["github", "woterclip", "agent", "orchestration", "persona", "heartbeat"]
 }

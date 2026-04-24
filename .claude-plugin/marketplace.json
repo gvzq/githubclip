@@ -1,8 +1,8 @@
 {
-  "name": "woterclip",
+  "name": "githubclip",
   "owner": {
     "name": "Gerardo Vazquez",
-    "url": "https://github.com/gvzq"
+    "url": "https://github.com/gvzq/githubclip"
   },
   "plugins": [
     {
@@ -24,8 +24,8 @@
         "claude-code",
         "task-routing"
       ],
-      "homepage": "https://github.com/gvzq/woterclip",
-      "repository": "https://github.com/gvzq/woterclip",
+      "homepage": "https://github.com/gvzq/githubclip",
+      "repository": "https://github.com/gvzq/githubclip",
       "license": "MIT"
     }
   ]
