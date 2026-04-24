@@ -14,10 +14,9 @@ Before starting, verify the GitHub MCP is available:
 
 1. Check that GitHub MCP tools are callable (repo, issues, labels operations)
 2. If not available, stop and instruct the user to connect GitHub MCP first:
-   - Ensure GitHub CLI (`gh`) is authenticated: `gh auth status`
-   - Add GitHub MCP to `.mcp.json` or global MCP config
-   - Restart Claude Code session
-   - Re-run `/githubclip-init`
+   - **Recommended:** Install the GitHub plugin from the Claude marketplace (`claude-plugins-official / GitHub`)
+   - Or: ensure GitHub CLI (`gh`) is authenticated (`gh auth status`) and add GitHub MCP manually to `.mcp.json`
+   - Restart Claude Code session, then re-run `/githubclip-init`
 
 ## Initialization Procedure
 

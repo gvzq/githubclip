@@ -30,7 +30,9 @@ claude --plugin-dir /path/to/githubclip
 ### Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- [GitHub MCP](https://github.com/github/github-mcp-server) connected – add to your `.mcp.json` or global MCP config:
+- **[GitHub plugin](https://claude.ai/marketplace)** installed from the Claude marketplace — search for `claude-plugins-official / GitHub` and enable it. This provides the GitHub MCP integration githubclip depends on.
+
+  Alternatively, connect GitHub MCP manually by adding to your `.mcp.json` or global MCP config:
   ```json
   {
     "mcpServers": {
@@ -168,7 +170,7 @@ Use `/persona-import` to convert Paperclip agent directories into githubclip per
 
 ## Background
 
-githubclip is inspired by [Paperclip](https://github.com/paperclipai/paperclip), an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. githubclip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by GitHub instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
+githubclip is a fork of [woterclip](https://github.com/wotai/woterclip), which was itself inspired by [Paperclip](https://github.com/paperclipai/paperclip) — an agent orchestration platform that uses a central API for task management, agent checkout, and chain-of-command routing. githubclip takes the same core ideas – persona-based identity, structured heartbeats, hierarchical escalation – and rebuilds them as a Claude Code plugin backed by GitHub instead of a custom API. The result is simpler (no server, no database, no separate processes) while keeping the parts that worked well: SOUL.md for agent identity, structured comments for audit trails, and a CEO/worker hierarchy for task decomposition.
 
 ## Design
 
